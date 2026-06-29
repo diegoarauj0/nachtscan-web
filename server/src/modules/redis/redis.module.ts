@@ -8,10 +8,10 @@ const redisModule = {
   inject: [ConfigService],
   useFactory: (configService: ConfigService) => {
     return new Redis({
-      username: configService.get("redis.username"),
-      password: configService.get("redis.password"),
-      host: configService.get("redis.host"),
-      port: configService.get("redis.port"),
+      username: configService.get("REDIS_USERNAME"),
+      password: configService.get("REDIS_PASSWORD"),
+      host: configService.get("REDIS_HOST"),
+      port: configService.get("REDIS_PORT"),
     });
   },
 };

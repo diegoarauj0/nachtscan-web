@@ -9,6 +9,10 @@ export class GithubSource implements BaseSource {
 
   public readonly profileUrl: (nickname: string) => string = (nickname) => `https://github.com/${nickname}`;
 
+  public onModuleInit(): boolean {
+    return true;
+  }
+
   public async scan(nickname: string): Promise<{ status: "found" | "not_found" }> {
     const headers = new Headers();
 

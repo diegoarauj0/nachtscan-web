@@ -1,6 +1,6 @@
-import { FindStatusNicknameResponseDto, SourceScanDto } from "./dto/scanStatusResponse.dto";
-import { InterfaceScan, InterfaceSourceScan } from "./scan.type";
-import { ScanService } from "./services/scan.service";
+import { FindStatusNicknameResponseDto, SourceScanDto } from "../dto/scanStatusResponse.dto";
+import { InterfaceScan, InterfaceSourceScan } from "../scan.type";
+import { ScanService } from "../services/scan.service";
 import { Throttle } from "@nestjs/throttler";
 import * as Swagger from "@nestjs/swagger";
 import * as NestJs from "@nestjs/common";

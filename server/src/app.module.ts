@@ -12,7 +12,7 @@ const configModule = ConfigModule.forRoot({
 });
 
 const throttler = ThrottlerModule.forRoot({
-  throttlers: [{ limit: 1, ttl: 1 }],
+  throttlers: [{ limit: 20, ttl: 60000 }],
 });
 
 const throttlerGuardProvider = {
@@ -22,7 +22,6 @@ const throttlerGuardProvider = {
 
 @Module({
   imports: [configModule, throttler, RedisModule, QueueModule, ScanModule],
-  controllers: [],
   providers: [throttlerGuardProvider],
 })
 export class AppModule {}

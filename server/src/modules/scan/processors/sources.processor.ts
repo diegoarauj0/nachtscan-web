@@ -1,21 +1,24 @@
-import { SourceScanRepository } from "./repositories/sourceScan.repository";
-import { ScanRepository } from "./repositories/scan.repository";
-import { BaseSource, InterfaceSourceScan } from "./scan.type";
-import { QUEUES_CONSTANTS } from "../queue/queue.constants";
+import { SourceScanRepository } from "../repositories/sourceScan.repository";
+import { ScanRepository } from "../repositories/scan.repository";
+import { BaseSource, InterfaceSourceScan } from "../scan.type";
+import { QUEUES_CONSTANTS } from "../../queue/queue.constants";
 import { Processor, WorkerHost } from "@nestjs/bullmq";
-import { LockService } from "./services/lock.service";
+import { LockService } from "../services/lock.service";
 import { Logger, OnModuleInit } from "@nestjs/common";
-import sourceRegistry from "./sources.registry";
+import sourceRegistry from "../sources.registry";
+import { ConfigService } from "@nestjs/config";
 import { Job } from "bullmq";
 
 @Processor(QUEUES_CONSTANTS.SOURCES)
 export class ScanProcessor extends WorkerHost implements OnModuleInit {
   private readonly logger = new Logger(ScanProcessor.name);
   private readonly sources = new Map<string, BaseSource>(sourceRegistry.map((source) => [source.sourceId, source]));
+  private readonly sourcesDeactivated = new Set<string>();
 
   constructor(
     private readonly sourceScanRepository: SourceScanRepository,
     private readonly scanRepository: ScanRepository,
+    private readonly configService: ConfigService,
     private readonly lockService: LockService,
   ) {
     super();
@@ -23,7 +26,27 @@ export class ScanProcessor extends WorkerHost implements OnModuleInit {
 
   public async onModuleInit(): Promise<void> {
     for (const source of sourceRegistry) {
-      if (source.onModuleInit) await source.onModuleInit();
+      if (source.onModuleInit) {
+        this.logger.log(`Loading source ${source.sourceId}...`);
+
+        const activated = this.configService.get<string>("ENABLED_SOURCES", "").split(",").includes(source.sourceId);
+
+        if (activated === false) {
+          this.logger.warn(`Source "${source.sourceId}" is disabled by configuration.`);
+          return;
+        }
+
+        try {
+          const result = await source.onModuleInit();
+
+          if (result !== true) {
+            this.sourcesDeactivated.add(source.sourceId);
+            this.logger.warn(`Source "${source.sourceId}" is unavailable and has been disabled.`);
+          }
+        } catch {
+          this.logger.error(`Source "${source.sourceId}" failed to initialize and has been disabled.`);
+        }
+      }
     }
   }
 
@@ -43,6 +66,11 @@ export class ScanProcessor extends WorkerHost implements OnModuleInit {
       const sourceName = sourceClass.sourceName;
       const sourceId = sourceClass.sourceId;
 
+      if (this.sourcesDeactivated.has(sourceId)) {
+        this.logger.debug(`Skipping source scan "${sourceId}" for "${nickname}" because the source is disabled.`);
+        return;
+      }
+
       let sourceScan = await this.sourceScanRepository.findSourceScan(nickname, sourceId);
 
       if (sourceScan !== null) {
@@ -52,7 +80,7 @@ export class ScanProcessor extends WorkerHost implements OnModuleInit {
         }
 
         if (this.isCacheValid(sourceScan)) {
-          this.logger.debug(`Source scan "${sourceId}" for "${nickname}" does not have a valid cached result.`);
+          this.logger.debug(`Skipping source scan "${sourceId}" for "${nickname}" because a valid cache entry exists.`);
           return;
         }
 

@@ -1,5 +1,5 @@
 {
-  "name": "naschscan-server",
+  "name": "nachtscan-server",
   "version": "1.0.0",
   "description": "",
   "author": "Diego Araujo",
@@ -37,7 +37,7 @@
     "@eslint/js": "^9.18.0",
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
-    "@nestjs/testing": "^11.0.1",
+    "@nestjs/testing": "^11.1.27",
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.0",

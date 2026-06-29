@@ -3,9 +3,9 @@ import { ScanRepository } from "./repositories/scan.repository";
 import { QUEUES_CONSTANTS } from "../queue/queue.constants";
 import { ScanService } from "./services/scan.service";
 import { LockService } from "./services/lock.service";
-import { ScanProcessor } from "./sources.processor";
+import { ScanProcessor } from "./processors/sources.processor";
 import { RedisModule } from "../redis/redis.module";
-import { ScanController } from "./scan.controller";
+import { ScanController } from "./controllers/scan.controller";
 import { BullModule } from "@nestjs/bullmq";
 import { Module } from "@nestjs/common";
 

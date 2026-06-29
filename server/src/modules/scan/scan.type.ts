@@ -36,7 +36,7 @@ export interface BaseSource {
   readonly sourceName: SourcesName;
   readonly profileUrl: (nickname: string) => string;
 
-  onModuleInit?(): Promise<void> | void;
+  onModuleInit?(): Promise<boolean | void> | boolean | void;
 
   scan(nickname: string): Promise<{ status: "found" | "not_found" }>;
 }
