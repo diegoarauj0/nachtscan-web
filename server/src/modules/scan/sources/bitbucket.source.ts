@@ -1,13 +1,13 @@
 import { BaseSource, SourcesId, SourcesName } from "../scan.type";
 import { USER_AGENT } from "../sources.constants";
 
-export class GithubSource implements BaseSource {
-  public readonly sourceName: SourcesName = "Github";
-  public readonly sourceId: SourcesId = "github";
+export class BitbucketSource implements BaseSource {
+  public readonly sourceName: SourcesName = "Bitbucket";
+  public readonly sourceId: SourcesId = "bitbucket";
 
   public readonly cacheExpiresInMs: number = 12 * 60 * 60 * 1000;
 
-  public readonly profileUrl: (nickname: string) => string = (nickname) => `https://github.com/${nickname}`;
+  public readonly profileUrl: (nickname: string) => string = (nickname) => `https://bitbucket.org/${nickname}`;
 
   constructor(private readonly token: string | undefined) {}
 
@@ -23,7 +23,7 @@ export class GithubSource implements BaseSource {
 
     if (this.token !== undefined) headers.set("Authorization", `Bearer ${this.token}`);
 
-    const url = `https://api.github.com/users/${encodeURIComponent(nickname)}`;
+    const url = `https://api.bitbucket.org/2.0/users/${encodeURIComponent(nickname)}`;
 
     const response = await fetch(url, {
       headers: headers,
@@ -32,6 +32,6 @@ export class GithubSource implements BaseSource {
     if (response.status === 200) return { status: "found" };
     if (response.status === 404) return { status: "not_found" };
 
-    throw new Error(`GitHub API request failed with status ${response.status}.`);
+    throw new Error(`Bitbucket API request failed with status ${response.status}.`);
   }
 }

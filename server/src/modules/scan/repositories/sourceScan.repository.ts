@@ -1,7 +1,7 @@
-import { REDIS_CLIENT } from "../../redis/redis.constants";
 import { Inject, Injectable, Logger } from "@nestjs/common";
+import { REDIS_CLIENT } from "../../redis/redis.constants";
 import { InterfaceSourceScan } from "../scan.type";
-import sourceRegistry from "../sources.registry";
+import { ConfigService } from "@nestjs/config";
 import Redis from "ioredis";
 
 interface InterfaceCreatePendingProps {
@@ -27,11 +27,11 @@ interface InterfaceUpdateToFailedProps {
 @Injectable()
 export class SourceScanRepository {
   private readonly SOURCE_SCAN_TTL: number = 24 * 60 * 60;
-
   private readonly logger = new Logger(SourceScanRepository.name);
-  private readonly sourceRegistry = sourceRegistry;
 
   constructor(
+    private readonly configService: ConfigService,
+
     @Inject(REDIS_CLIENT)
     private readonly redis: Redis,
   ) {}
@@ -47,7 +47,7 @@ export class SourceScanRepository {
 
   public async findSourceScans(nickname: string): Promise<Record<string, InterfaceSourceScan>> {
     const sources: Record<string, InterfaceSourceScan> = {};
-    const sourceIds = this.sourceRegistry.map((source) => source.sourceId);
+    const sourceIds = this.configService.get<string>("ENABLED_SOURCES", "").split(",");
 
     for (const sourceId of sourceIds) {
       const sourceScanKey = this.sourceScanKey(nickname, sourceId);

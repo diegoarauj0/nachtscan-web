@@ -3,7 +3,7 @@ import { InterfaceScan, InterfaceSourceScan } from "../scan.type";
 import { ScanRepository } from "../repositories/scan.repository";
 import { QUEUES_CONSTANTS } from "../../queue/queue.constants";
 import { Injectable, Logger } from "@nestjs/common";
-import sourceRegistry from "../sources.registry";
+import { ConfigService } from "@nestjs/config";
 import { LockService } from "./lock.service";
 import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
@@ -16,11 +16,11 @@ interface InterfaceFindStatusNickname {
 @Injectable()
 export class ScanService {
   private readonly logger = new Logger(ScanService.name);
-  private readonly sources = sourceRegistry;
 
   constructor(
     private readonly sourceScanRepository: SourceScanRepository,
     private readonly scanRepository: ScanRepository,
+    private readonly configService: ConfigService,
     private readonly lockService: LockService,
 
     @InjectQueue(QUEUES_CONSTANTS.SOURCES)
@@ -31,11 +31,13 @@ export class ScanService {
     this.logger.debug(`Starting scan for "${nickname}".`);
 
     await this.lockService.withLock(`lock:scan:${nickname}`, 60 * 5, async () => {
+      const sourceLength = this.configService.get<string>("ENABLED_SOURCES", "").split(",").length;
+
       try {
         await this.ensurePendingScan(nickname);
         await this.enqueueSources(nickname);
 
-        this.logger.debug(`Enqueued ${this.sources.length} source jobs for "${nickname}".`);
+        this.logger.debug(`Enqueued ${sourceLength} source jobs for "${nickname}".`);
       } catch (error) {
         await this.updateToFailed(nickname, error);
       }
@@ -94,9 +96,11 @@ export class ScanService {
   }
 
   private async enqueueSources(nickname: string): Promise<void> {
+    const sources = this.configService.get<string>("ENABLED_SOURCES", "").split(",");
+
     await this.sourcesQueue.addBulk(
-      this.sources.map((source) => ({
-        name: source.sourceId,
+      sources.map((sourceId) => ({
+        name: sourceId,
         data: { nickname },
       })),
     );

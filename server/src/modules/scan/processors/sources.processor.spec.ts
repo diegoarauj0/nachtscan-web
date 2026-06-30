@@ -13,18 +13,6 @@ jest.spyOn(Logger.prototype, "warn").mockImplementation(() => {});
 jest.spyOn(Logger.prototype, "error").mockImplementation(() => {});
 jest.spyOn(Logger.prototype, "log").mockImplementation(() => {});
 
-jest.mock("../sources.registry", () => [createMockSource()]);
-
-function createMockSource(): BaseSource {
-  return {
-    sourceId: "github",
-    sourceName: "Github",
-    cacheExpiresInMs: 1000,
-    profileUrl: () => "https://github.com/test",
-    scan: jest.fn(),
-  } as unknown as BaseSource;
-}
-
 describe("ScanProcessor", () => {
   const mockSourceScanRepository = {
     findSourceScan: jest.fn(),
@@ -73,6 +61,14 @@ describe("ScanProcessor", () => {
     }).compile();
 
     scanProcessor = moduleRef.get(ScanProcessor);
+
+    scanProcessor["sources"].set("github", {
+      sourceId: "github",
+      sourceName: "Github",
+      cacheExpiresInMs: 1000,
+      profileUrl: () => "https://github.com/test",
+      scan: jest.fn(),
+    });
 
     jest.resetAllMocks();
 

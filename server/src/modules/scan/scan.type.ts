@@ -1,6 +1,8 @@
 export type ScanStatusType = "pending" | "completed" | "failed";
-export type SourcesName = "Github";
-export type SourcesId = "github";
+export type SourcesName =
+  "Github" | "Gitlab" | "Bitbucket" | "Codeberg" | "Dev.to" | "Steam" | "Osu!" | "Minecraft" | "Mastodon" | "Bluesky";
+export type SourcesId =
+  "github" | "gitlab" | "bitbucket" | "codeberg" | "devto" | "steam" | "osu" | "minecraft" | "mastodon" | "bluesky";
 
 export interface InterfaceSourceScan {
   sourceId: string;

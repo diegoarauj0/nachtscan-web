@@ -1,13 +1,13 @@
 import { BaseSource, SourcesId, SourcesName } from "../scan.type";
 import { USER_AGENT } from "../sources.constants";
 
-export class GithubSource implements BaseSource {
-  public readonly sourceName: SourcesName = "Github";
-  public readonly sourceId: SourcesId = "github";
+export class GitlabSource implements BaseSource {
+  public readonly sourceName: SourcesName = "Gitlab";
+  public readonly sourceId: SourcesId = "gitlab";
 
   public readonly cacheExpiresInMs: number = 12 * 60 * 60 * 1000;
 
-  public readonly profileUrl: (nickname: string) => string = (nickname) => `https://github.com/${nickname}`;
+  public readonly profileUrl: (nickname: string) => string = (nickname) => `https://gitlab.com/${nickname}`;
 
   constructor(private readonly token: string | undefined) {}
 
@@ -23,15 +23,20 @@ export class GithubSource implements BaseSource {
 
     if (this.token !== undefined) headers.set("Authorization", `Bearer ${this.token}`);
 
-    const url = `https://api.github.com/users/${encodeURIComponent(nickname)}`;
+    const url = `https://gitlab.com/api/v4/users?username=${encodeURIComponent(nickname)}`;
 
     const response = await fetch(url, {
       headers: headers,
     });
 
-    if (response.status === 200) return { status: "found" };
-    if (response.status === 404) return { status: "not_found" };
+    if (response.status !== 200) {
+      throw new Error(`GitLab API request failed with status ${response.status}.`);
+    }
 
-    throw new Error(`GitHub API request failed with status ${response.status}.`);
+    const users = (await response.json()) as Array<unknown>;
+
+    if (users.length > 0) return { status: "found" };
+
+    return { status: "not_found" };
   }
 }

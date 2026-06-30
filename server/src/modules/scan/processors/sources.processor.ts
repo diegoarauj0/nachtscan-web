@@ -2,18 +2,18 @@ import { SourceScanRepository } from "../repositories/sourceScan.repository";
 import { ScanRepository } from "../repositories/scan.repository";
 import { BaseSource, InterfaceSourceScan } from "../scan.type";
 import { QUEUES_CONSTANTS } from "../../queue/queue.constants";
+import { createSourceRegistry } from "../sources.registry";
 import { Processor, WorkerHost } from "@nestjs/bullmq";
 import { LockService } from "../services/lock.service";
 import { Logger, OnModuleInit } from "@nestjs/common";
-import sourceRegistry from "../sources.registry";
 import { ConfigService } from "@nestjs/config";
 import { Job } from "bullmq";
 
 @Processor(QUEUES_CONSTANTS.SOURCES)
 export class ScanProcessor extends WorkerHost implements OnModuleInit {
   private readonly logger = new Logger(ScanProcessor.name);
-  private readonly sources = new Map<string, BaseSource>(sourceRegistry.map((source) => [source.sourceId, source]));
   private readonly sourcesDeactivated = new Set<string>();
+  private readonly sources = new Map<string, BaseSource>();
 
   constructor(
     private readonly sourceScanRepository: SourceScanRepository,
@@ -25,27 +25,51 @@ export class ScanProcessor extends WorkerHost implements OnModuleInit {
   }
 
   public async onModuleInit(): Promise<void> {
-    for (const source of sourceRegistry) {
-      if (source.onModuleInit) {
-        this.logger.log(`Loading source ${source.sourceId}...`);
+    const sources = createSourceRegistry({
+      bitbucketToken: this.configService.get<string>("BITBUCKET_TOKEN"),
+      gitlabToken: this.configService.get<string>("GITLAB_TOKEN"),
+      codebergToken: this.configService.get<string>("CODEBERG_TOKEN"),
+      githubToken: this.configService.get<string>("GITHUB_TOKEN"),
+      osuClientId: this.configService.get<string>("OSU_CLIENT_ID"),
+      osuClientSecret: this.configService.get<string>("OSU_CLIENT_SECRET"),
+      steamApiKey: this.configService.get<string>("STEAM_API_KEY"),
+      devtoApiKey: this.configService.get<string>("DEVTO_API_KEY"),
+      mastodonClientKey: this.configService.get<string>("MASTODON_CLIENT_KEY"),
+      mastodonClientSecret: this.configService.get<string>("MASTODON_CLIENT_SECRET"),
+      mastodonAuthorizationCode: this.configService.get<string>("MASTODON_AUTHORIZATION_CODE"),
+    });
 
-        const activated = this.configService.get<string>("ENABLED_SOURCES", "").split(",").includes(source.sourceId);
+    for (const source of sources) {
+      this.sources.set(source.sourceId, source);
 
-        if (activated === false) {
-          this.logger.warn(`Source "${source.sourceId}" is disabled by configuration.`);
-          return;
+      if (!source.onModuleInit) {
+        continue;
+      }
+
+      this.logger.log(`Loading source ${source.sourceId}...`);
+
+      const activated = this.configService.get<string>("ENABLED_SOURCES", "").split(",").includes(source.sourceId);
+
+      if (!activated) {
+        this.logger.warn(`Source "${source.sourceId}" is disabled by configuration.`);
+        this.sourcesDeactivated.add(source.sourceId);
+        continue;
+      }
+
+      try {
+        const result = await source.onModuleInit();
+
+        if (!result) {
+          this.sourcesDeactivated.add(source.sourceId);
+          this.logger.warn(`Source "${source.sourceId}" is unavailable and has been disabled.`);
         }
+      } catch (error) {
+        this.sourcesDeactivated.add(source.sourceId);
 
-        try {
-          const result = await source.onModuleInit();
-
-          if (result !== true) {
-            this.sourcesDeactivated.add(source.sourceId);
-            this.logger.warn(`Source "${source.sourceId}" is unavailable and has been disabled.`);
-          }
-        } catch {
-          this.logger.error(`Source "${source.sourceId}" failed to initialize and has been disabled.`);
-        }
+        this.logger.error(
+          `Source "${source.sourceId}" failed to initialize and has been disabled.`,
+          error instanceof Error ? error.stack : undefined,
+        );
       }
     }
   }
@@ -117,6 +141,8 @@ export class ScanProcessor extends WorkerHost implements OnModuleInit {
       let complete = true;
 
       this.sources.forEach(({ sourceId }) => {
+        if (this.sourcesDeactivated.has(sourceId)) return;
+
         if (sources[sourceId] === undefined || sources[sourceId].status === "pending") {
           complete = false;
         }
