@@ -1,7 +1,7 @@
 import { LockService } from "@/modules/redis/services/lock.service";
 import { InterfaceBaseSource, SourceId } from "../source.type";
 import { REDIS_CLIENT } from "@/modules/redis/redis.constants";
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, Logger } from "@nestjs/common";
 import { USER_AGENT } from "../sources.constants";
 import { ConfigService } from "@nestjs/config";
 import timers from "node:timers/promises";
@@ -19,6 +19,8 @@ interface InterfaceAuthenticateResult {
 
 @Injectable()
 export class OsuSource implements InterfaceBaseSource {
+  private readonly logger = new Logger(OsuSource.name);
+
   public readonly sourceId: SourceId = SourceId.Osu;
   public readonly sourceName: string = "Osu!";
 
@@ -47,37 +49,47 @@ export class OsuSource implements InterfaceBaseSource {
     const clientSecret = this.configService.get<string>("OSU_CLIENT_SECRET") || undefined;
 
     if (clientId === undefined || clientSecret === undefined) {
-      return false;
+      throw new Error("OSU_CLIENT_ID or OSU_CLIENT_SECRET is not configured.");
     }
 
     const cachedAccessToken = await this.redis.get(this.ACCESS_TOKEN_REDIS_KEY);
     const cachedAccessTokenTTL = await this.redis.ttl(this.ACCESS_TOKEN_REDIS_KEY);
 
     if (cachedAccessToken !== null && cachedAccessTokenTTL > 0) {
+      this.logger.log(`Loaded access token from Redis (expires in ${cachedAccessTokenTTL}s).`);
+
       this.accessToken = cachedAccessToken;
       this.accessTokenExpiresAt = Date.now() + cachedAccessTokenTTL * 1000;
 
       return true;
     }
 
+    this.logger.log("No cached access token found. Authenticating with osu! API.");
+
     try {
       await this.refreshAccessToken({ clientId, clientSecret });
       return true;
-    } catch {
-      return false;
+    } catch (error) {
+      throw new Error("Failed to authenticate during initialization.", { cause: error });
     }
   }
 
   public async scan(nickname: string, attempt: number = 0): Promise<{ status: "found" | "not_found" }> {
     if (this.isAccessTokenExpired()) {
+      this.logger.log("Access token expired. Refreshing.");
+
       if (attempt > 10) throw new Error("osu! authenticate lock timeout.");
 
       const acquired = await this.lockService.acquire(this.AUTHENTICATE_LOCK_KEY, 90);
 
       if (acquired === false) {
+        this.logger.debug("Authentication lock is held by another instance. Waiting...");
+
         await timers.setTimeout(2000);
         return this.scan(nickname, attempt + 1);
       }
+
+      this.logger.debug("Authentication lock acquired.");
 
       try {
         const clientId = this.configService.getOrThrow<string>("OSU_CLIENT_ID");
@@ -86,6 +98,7 @@ export class OsuSource implements InterfaceBaseSource {
         await this.refreshAccessToken({ clientId, clientSecret });
       } finally {
         await this.lockService.release(this.AUTHENTICATE_LOCK_KEY);
+        this.logger.debug("Authentication lock released.");
       }
     }
 
@@ -117,12 +130,16 @@ export class OsuSource implements InterfaceBaseSource {
   }
 
   private async refreshAccessToken(credential: InterfaceCredential): Promise<void> {
+    this.logger.log("Requesting a new access token.");
+
     const { accessToken, expiresInSeconds } = await this.authenticate(credential);
 
     this.accessToken = accessToken;
     this.accessTokenExpiresAt = Date.now() + expiresInSeconds * 1000;
 
     await this.redis.set(this.ACCESS_TOKEN_REDIS_KEY, accessToken, "EX", expiresInSeconds);
+
+    this.logger.log(`Access token refreshed successfully (expires in ${expiresInSeconds}s).`);
   }
 
   private async authenticate(credential: InterfaceCredential): Promise<InterfaceAuthenticateResult> {

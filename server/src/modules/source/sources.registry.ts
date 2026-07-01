@@ -44,7 +44,7 @@ export class SourcesRegistry implements OnModuleInit {
     this.sources.set(this.osuSource.sourceId, this.osuSource);
   }
 
-  public get sourcesInArray(): InterfaceBaseSource[] {
+  public sourcesInArray(): InterfaceBaseSource[] {
     const sourcesInArray: InterfaceBaseSource[] = [];
 
     for (const source of this.sources.values()) {
@@ -56,7 +56,7 @@ export class SourcesRegistry implements OnModuleInit {
     return sourcesInArray;
   }
 
-  public get sourcesAllInArray(): InterfaceBaseSource[] {
+  public sourcesAllInArray(): InterfaceBaseSource[] {
     const sourcesInArray: InterfaceBaseSource[] = [];
 
     for (const source of this.sources.values()) {
@@ -84,7 +84,10 @@ export class SourcesRegistry implements OnModuleInit {
     for (const [sourceId, source] of this.sources) {
       this.logger.log(`Loading source ${sourceId}...`);
 
-      if (!source.onInit) continue;
+      if (!source.onInit) {
+        this.logger.log(`Source ${sourceId} loaded successfully.`);
+        continue;
+      }
 
       if (!enabledSources.has(source.sourceId)) {
         this.logger.warn(`Source "${source.sourceId}" is disabled by configuration.`);
@@ -99,12 +102,13 @@ export class SourcesRegistry implements OnModuleInit {
           this.sourcesDeactivated.add(source.sourceId);
           this.logger.warn(`Source "${source.sourceId}" is unavailable and has been disabled.`);
         }
+
+        this.logger.log(`Source ${sourceId} loaded successfully.`);
       } catch (error) {
         this.sourcesDeactivated.add(source.sourceId);
 
-        this.logger.error(
-          `Source "${source.sourceId}" failed to initialize and has been disabled.`,
-          error instanceof Error ? error.stack : undefined,
+        this.logger.warn(
+          `Source "${source.sourceId}" has been disabled: ${error instanceof Error ? error.message : "Unknown error"}`,
         );
       }
     }

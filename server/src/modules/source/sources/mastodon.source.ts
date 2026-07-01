@@ -1,7 +1,7 @@
 import { LockService } from "@/modules/redis/services/lock.service";
 import { InterfaceBaseSource, SourceId } from "../source.type";
 import { REDIS_CLIENT } from "@/modules/redis/redis.constants";
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, Logger } from "@nestjs/common";
 import { USER_AGENT } from "../sources.constants";
 import { ConfigService } from "@nestjs/config";
 import timers from "node:timers/promises";
@@ -14,6 +14,8 @@ interface InterfaceCredential {
 
 @Injectable()
 export class MastodonSource implements InterfaceBaseSource {
+  private readonly logger = new Logger(MastodonSource.name);
+
   public readonly sourceId: SourceId.Mastodon = SourceId.Mastodon;
   public readonly sourceName: string = "Mastodon";
 
@@ -37,20 +39,24 @@ export class MastodonSource implements InterfaceBaseSource {
   public async onInit(): Promise<boolean> {
     const clientKey = this.configService.get<string>("MASTODON_CLIENT_KEY") || undefined;
     const clientSecret = this.configService.get<string>("MASTODON_CLIENT_SECRET") || undefined;
-    const authorizationCode = this.configService.get<string>("MASTODON_AUTHORIZATION_CODE") || undefined;
 
-    if (clientKey === undefined || clientSecret === undefined || authorizationCode === undefined) {
-      return false;
+    if (clientKey === undefined || clientSecret === undefined) {
+      throw new Error("MASTODON_CLIENT_KEY or MASTODON_CLIENT_SECRET is not configured.");
     }
 
     let accessToken = await this.redis.get("mastodon:access_token");
     const accessTokenExpiresTTL = await this.redis.ttl("mastodon:access_token");
 
     if (accessToken !== null) {
+      this.logger.log(`Loaded access token from Redis (expires in ${accessTokenExpiresTTL}s).`);
+
       this.accessToken = accessToken;
       this.accessTokenExpiresAt = Date.now() + accessTokenExpiresTTL * 1000;
+
       return true;
     }
+
+    this.logger.log("No cached access token found. Authenticating with Mastodon API.");
 
     accessToken = await this.authenticate({
       clientSecret: clientSecret,
@@ -62,11 +68,15 @@ export class MastodonSource implements InterfaceBaseSource {
 
     await this.redis.set("mastodon:access_token", accessToken, "EX", this.ACCESS_TOKEN_CACHE_EXPIRES_TTL);
 
+    this.logger.log(`Access token cached for ${this.ACCESS_TOKEN_CACHE_EXPIRES_TTL} seconds.`);
+
     return true;
   }
 
   public async scan(nickname: string, attempt: number = 0): Promise<{ status: "found" | "not_found" }> {
     if (this.isAccessTokenExpired()) {
+      this.logger.log("Access token expired. Refreshing.");
+
       if (attempt > 10) throw new Error("Mastodon authenticate lock timeout.");
 
       const lockKey = "lock:mastodon:authenticate";
@@ -74,9 +84,13 @@ export class MastodonSource implements InterfaceBaseSource {
       const acquired = await this.lockService.acquire(lockKey, 90);
 
       if (acquired === false) {
+        this.logger.debug("Authentication lock is held by another instance. Waiting...");
+
         await timers.setTimeout(2000);
         return this.scan(nickname, attempt + 1);
       }
+
+      this.logger.debug("Authentication lock acquired.");
 
       try {
         const clientKey = this.configService.getOrThrow<string>("MASTODON_CLIENT_KEY");
@@ -89,7 +103,15 @@ export class MastodonSource implements InterfaceBaseSource {
 
         this.accessToken = accessToken;
         this.accessTokenExpiresAt = Date.now() + this.ACCESS_TOKEN_CACHE_EXPIRES_TTL * 1000;
+
+        await this.redis.set("mastodon:access_token", accessToken, "EX", this.ACCESS_TOKEN_CACHE_EXPIRES_TTL);
+
+        this.logger.log(
+          `Access token refreshed successfully (cached for ${this.ACCESS_TOKEN_CACHE_EXPIRES_TTL} seconds).`,
+        );
       } finally {
+        this.logger.debug("Authentication lock released.");
+
         await this.lockService.release(lockKey);
       }
     }

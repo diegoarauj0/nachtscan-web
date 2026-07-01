@@ -47,7 +47,7 @@ export class SourceScanRepository {
 
   public async findSourceScans(nickname: string): Promise<Record<string, InterfaceSourceScan>> {
     const sources: Partial<Record<SourceId, InterfaceSourceScan>> = {};
-    const sourceIds = this.sourcesRegistry.sourcesInArray;
+    const sourceIds = this.sourcesRegistry.sourcesInArray();
 
     for (const { sourceId } of sourceIds) {
       const sourceScanKey = this.sourceScanKey(nickname, sourceId);

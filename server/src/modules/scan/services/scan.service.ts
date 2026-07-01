@@ -1,13 +1,14 @@
 import { SourceScanRepository } from "../../source/repositories/sourceScan.repository";
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
+import { SourcesQueueEvents } from "@/modules/source/sources.QueueEvents";
 import { ScanRepository } from "../repositories/scan.repository";
 import { LockService } from "../../redis/services/lock.service";
 import { SourcesRegistry } from "../../source/sources.registry";
 import { QUEUES_CONSTANTS } from "../../queue/queue.constants";
 import { InterfaceSourceScan } from "../../source/source.type";
-import { Job, Queue, QueueEvents } from "bullmq";
 import { InterfaceScan } from "../scan.type";
 import { InjectQueue } from "@nestjs/bullmq";
+import { Job, Queue } from "bullmq";
 
 interface InterfaceFindStatusNickname {
   sources: Record<string, InterfaceSourceScan>;
@@ -17,10 +18,10 @@ interface InterfaceFindStatusNickname {
 @Injectable()
 export class ScanService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(ScanService.name);
-  private readonly queueEvents = new QueueEvents(QUEUES_CONSTANTS.SOURCES);
 
   constructor(
     private readonly sourceScanRepository: SourceScanRepository,
+    private readonly sourcesQueueEvents: SourcesQueueEvents,
     private readonly sourcesRegistry: SourcesRegistry,
     private readonly scanRepository: ScanRepository,
     private readonly lockService: LockService,
@@ -30,13 +31,13 @@ export class ScanService implements OnModuleInit, OnModuleDestroy {
   ) {}
 
   public onModuleInit(): void {
-    this.queueEvents.on("failed", ({ jobId }): void => {
+    this.sourcesQueueEvents.on("failed", ({ jobId }): void => {
       void Job.fromId<{ nickname: string }>(this.sourcesQueue, jobId).then((job) => {
         if (job?.data.nickname) void this.completeScanIfFinished(job?.data.nickname);
       });
     });
 
-    this.queueEvents.on("completed", ({ jobId }): void => {
+    this.sourcesQueueEvents.on("completed", ({ jobId }): void => {
       void Job.fromId<{ nickname: string }>(this.sourcesQueue, jobId).then((job) => {
         if (job?.data.nickname) void this.completeScanIfFinished(job?.data.nickname);
       });
@@ -44,14 +45,14 @@ export class ScanService implements OnModuleInit, OnModuleDestroy {
   }
 
   public async onModuleDestroy(): Promise<void> {
-    await this.queueEvents.close();
+    await this.sourcesQueueEvents.close();
   }
 
   public async scanNickname(nickname: string): Promise<void> {
     this.logger.debug(`Starting scan for "${nickname}".`);
 
     await this.lockService.withLock(`lock:scan:${nickname}`, 60 * 5, async () => {
-      const sourceLength = this.sourcesRegistry.sourcesInArray.length;
+      const sourceLength = this.sourcesRegistry.sourcesInArray().length;
 
       try {
         await this.ensurePendingScan(nickname);
@@ -135,7 +136,7 @@ export class ScanService implements OnModuleInit, OnModuleDestroy {
       const sources = await this.sourceScanRepository.findSourceScans(nickname);
       let complete = true;
 
-      this.sourcesRegistry.sourcesInArray.forEach((source) => {
+      this.sourcesRegistry.sourcesInArray().forEach((source) => {
         const sourceId = source.sourceId;
 
         if (sources[sourceId] === undefined || sources[sourceId].status === "pending") {
@@ -153,7 +154,7 @@ export class ScanService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async enqueueSources(nickname: string): Promise<void> {
-    const sources = this.sourcesRegistry.sourcesInArray;
+    const sources = this.sourcesRegistry.sourcesInArray();
 
     await this.sourcesQueue.addBulk(
       sources.map(({ sourceId }) => ({

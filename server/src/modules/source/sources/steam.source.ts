@@ -17,7 +17,11 @@ export class SteamSource implements InterfaceBaseSource {
   public onInit(): boolean {
     const token = this.configService.get<string>("STEAM_TOKEN") || undefined;
 
-    return token !== undefined;
+    if (token === undefined) {
+      throw new Error("STEAM_TOKEN is not configured.");
+    }
+
+    return true;
   }
 
   public async scan(nickname: string): Promise<{ status: "found" | "not_found" }> {
