@@ -1,15 +1,17 @@
-import { BaseSource, SourcesId, SourcesName } from "../scan.type";
+import { InterfaceBaseSource, SourceId } from "../source.type";
 import { USER_AGENT } from "../sources.constants";
+import { Injectable } from "@nestjs/common";
 
-export class MinecraftSource implements BaseSource {
-  public readonly sourceName: SourcesName = "Minecraft";
-  public readonly sourceId: SourcesId = "minecraft";
+@Injectable()
+export class MinecraftSource implements InterfaceBaseSource {
+  public readonly sourceId: SourceId = SourceId.Minecraft;
+  public readonly sourceName: string = "Minecraft";
 
   public readonly cacheExpiresInMs: number = 3 * 60 * 60 * 1000;
 
   public readonly profileUrl: (nickname: string) => string = (nickname) => `https://pt.namemc.com/profile/${nickname}`;
 
-  public onModuleInit(): boolean {
+  public onInit(): boolean {
     return true;
   }
 

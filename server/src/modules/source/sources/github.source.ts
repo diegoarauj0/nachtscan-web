@@ -1,17 +1,20 @@
-import { BaseSource, SourcesId, SourcesName } from "../scan.type";
+import { InterfaceBaseSource, SourceId } from "../source.type";
 import { USER_AGENT } from "../sources.constants";
+import { ConfigService } from "@nestjs/config";
+import { Injectable } from "@nestjs/common";
 
-export class GithubSource implements BaseSource {
-  public readonly sourceName: SourcesName = "Github";
-  public readonly sourceId: SourcesId = "github";
+@Injectable()
+export class GithubSource implements InterfaceBaseSource {
+  public readonly sourceId: SourceId = SourceId.GitHub;
+  public readonly sourceName: string = "Github";
 
   public readonly cacheExpiresInMs: number = 12 * 60 * 60 * 1000;
 
   public readonly profileUrl: (nickname: string) => string = (nickname) => `https://github.com/${nickname}`;
 
-  constructor(private readonly token: string | undefined) {}
+  constructor(private readonly configService: ConfigService) {}
 
-  public onModuleInit(): boolean {
+  public onInit(): boolean {
     return true;
   }
 
@@ -21,7 +24,8 @@ export class GithubSource implements BaseSource {
     headers.set("Accept", "application/json");
     headers.set("User-Agent", USER_AGENT);
 
-    if (this.token !== undefined) headers.set("Authorization", `Bearer ${this.token}`);
+    const token = this.configService.get<string>("GITHUB_TOKEN") || undefined;
+    if (token !== undefined) headers.set("Authorization", `Bearer ${token}`);
 
     const url = `https://api.github.com/users/${encodeURIComponent(nickname)}`;
 

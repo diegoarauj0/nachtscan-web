@@ -1,21 +1,28 @@
-import { BaseSource, SourcesId, SourcesName } from "../scan.type";
+import { InterfaceBaseSource, SourceId } from "../source.type";
 import { USER_AGENT } from "../sources.constants";
+import { ConfigService } from "@nestjs/config";
+import { Injectable } from "@nestjs/common";
 
-export class SteamSource implements BaseSource {
-  public readonly sourceName: SourcesName = "Steam";
-  public readonly sourceId: SourcesId = "steam";
+@Injectable()
+export class SteamSource implements InterfaceBaseSource {
+  public readonly sourceId: SourceId.Steam = SourceId.Steam;
+  public readonly sourceName: string = "Steam";
 
   public readonly cacheExpiresInMs: number = 6 * 60 * 60 * 1000;
 
   public readonly profileUrl: (nickname: string) => string = (nickname) => `https://steamcommunity.com/id/${nickname}`;
 
-  constructor(private readonly apiKey: string | undefined) {}
+  constructor(private readonly configService: ConfigService) {}
 
-  public onModuleInit(): boolean {
-    return this.apiKey !== undefined;
+  public onInit(): boolean {
+    const token = this.configService.get<string>("STEAM_TOKEN") || undefined;
+
+    return token !== undefined;
   }
 
   public async scan(nickname: string): Promise<{ status: "found" | "not_found" }> {
+    const token = this.configService.get<string>("STEAM_TOKEN");
+
     const headers = new Headers();
 
     headers.set("Accept", "application/json");
@@ -23,7 +30,7 @@ export class SteamSource implements BaseSource {
 
     const url = new URL("https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/");
 
-    url.searchParams.set("key", this.apiKey as string);
+    url.searchParams.set("key", token as string);
     url.searchParams.set("vanityurl", nickname);
 
     const response = await fetch(url, {

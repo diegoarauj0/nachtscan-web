@@ -36,11 +36,7 @@ export default tseslint.config(
   },
 
   {
-    files: [
-      "**/*.test.ts",
-      "**/*.spec.ts",
-      "**/__tests__/**/*.ts",
-    ],
+    files: ["**/*.test.ts", "**/*.spec.ts", "**/__tests__/**/*.ts"],
 
     languageOptions: {
       globals: {
@@ -53,7 +49,8 @@ export default tseslint.config(
       "@typescript-eslint/no-unsafe-assignment": "off",
       "@typescript-eslint/no-unsafe-member-access": "off",
       "@typescript-eslint/unbound-method": "off",
-      "@typescript-eslint/no-unused-vars": "off"
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
     },
   },
 );

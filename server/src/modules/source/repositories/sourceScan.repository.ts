@@ -1,25 +1,25 @@
+import { InterfaceSourceScan, SourceId } from "../source.type";
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { REDIS_CLIENT } from "../../redis/redis.constants";
-import { InterfaceSourceScan } from "../scan.type";
-import { ConfigService } from "@nestjs/config";
+import { SourcesRegistry } from "../sources.registry";
 import Redis from "ioredis";
 
 interface InterfaceCreatePendingProps {
   profileUrl: string;
   sourceName: string;
-  sourceId: string;
+  sourceId: SourceId;
   nickname: string;
 }
 
 interface InterfaceUpdateToCompletedProps {
   cacheExpiresInMs: number;
-  sourceId: string;
+  sourceId: SourceId;
   nickname: string;
   found: boolean;
 }
 
 interface InterfaceUpdateToFailedProps {
-  sourceId: string;
+  sourceId: SourceId;
   nickname: string;
   error: string;
 }
@@ -30,13 +30,13 @@ export class SourceScanRepository {
   private readonly logger = new Logger(SourceScanRepository.name);
 
   constructor(
-    private readonly configService: ConfigService,
+    private readonly sourcesRegistry: SourcesRegistry,
 
     @Inject(REDIS_CLIENT)
     private readonly redis: Redis,
   ) {}
 
-  public async findSourceScan(nickname: string, sourceId: string): Promise<InterfaceSourceScan | null> {
+  public async findSourceScan(nickname: string, sourceId: SourceId): Promise<InterfaceSourceScan | null> {
     const sourceScanKey = this.sourceScanKey(nickname, sourceId);
 
     const stringify = await this.redis.get(sourceScanKey);
@@ -46,10 +46,10 @@ export class SourceScanRepository {
   }
 
   public async findSourceScans(nickname: string): Promise<Record<string, InterfaceSourceScan>> {
-    const sources: Record<string, InterfaceSourceScan> = {};
-    const sourceIds = this.configService.get<string>("ENABLED_SOURCES", "").split(",");
+    const sources: Partial<Record<SourceId, InterfaceSourceScan>> = {};
+    const sourceIds = this.sourcesRegistry.sourcesInArray;
 
-    for (const sourceId of sourceIds) {
+    for (const { sourceId } of sourceIds) {
       const sourceScanKey = this.sourceScanKey(nickname, sourceId);
 
       const stringify = await this.redis.get(sourceScanKey);
@@ -136,7 +136,7 @@ export class SourceScanRepository {
     return sourceScan;
   }
 
-  public async updateToPending(nickname: string, sourceId: string): Promise<InterfaceSourceScan> {
+  public async updateToPending(nickname: string, sourceId: SourceId): Promise<InterfaceSourceScan> {
     this.logger.debug(`Updating source scan "${sourceId}" for "${nickname}" to "pending".`);
 
     const sourceScan = await this.findSourceScan(nickname, sourceId);
@@ -157,7 +157,7 @@ export class SourceScanRepository {
     return sourceScan;
   }
 
-  private sourceScanKey(nickname: string, sourceId: string): string {
+  private sourceScanKey(nickname: string, sourceId: SourceId): string {
     return `scan:${nickname}:${sourceId}`;
   }
 

@@ -1,5 +1,6 @@
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { LockService } from "./services/lock.service";
 import { REDIS_CLIENT } from "./redis.constants";
+import { ConfigService } from "@nestjs/config";
 import { Module } from "@nestjs/common";
 import Redis from "ioredis";
 
@@ -17,8 +18,7 @@ const redisModule = {
 };
 
 @Module({
-  providers: [redisModule],
-  imports: [ConfigModule],
-  exports: [REDIS_CLIENT],
+  providers: [redisModule, LockService],
+  exports: [REDIS_CLIENT, LockService],
 })
 export class RedisModule {}

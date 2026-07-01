@@ -1,15 +1,17 @@
-import { BaseSource, SourcesId, SourcesName } from "../scan.type";
+import { InterfaceBaseSource, SourceId } from "../source.type";
 import { USER_AGENT } from "../sources.constants";
+import { Injectable } from "@nestjs/common";
 
-export class BlueskySource implements BaseSource {
-  public readonly sourceName: SourcesName = "Bluesky";
-  public readonly sourceId: SourcesId = "bluesky";
+@Injectable()
+export class BlueskySource implements InterfaceBaseSource {
+  public readonly sourceId: SourceId = SourceId.Bluesky;
+  public readonly sourceName: string = "Bluesky";
 
   public readonly cacheExpiresInMs: number = 6 * 60 * 60 * 1000;
 
   public readonly profileUrl: (nickname: string) => string = (nickname) => `https://bsky.app/profile/${nickname}`;
 
-  public onModuleInit(): boolean {
+  public onInit(): boolean {
     return true;
   }
 
@@ -19,7 +21,6 @@ export class BlueskySource implements BaseSource {
     headers.set("Accept", "application/json");
     headers.set("User-Agent", USER_AGENT);
 
-    // Bluesky usernames (handles) don't include the leading "@" in the API.
     const handle = nickname.startsWith("@") ? nickname.slice(1) : nickname;
 
     const url = new URL("https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile");
