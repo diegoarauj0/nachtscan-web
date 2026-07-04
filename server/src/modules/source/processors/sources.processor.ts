@@ -36,6 +36,7 @@ export class SourcesProcessor extends WorkerHost {
       const profileUrl = sourceClass.profileUrl(nickname);
       const sourceName = sourceClass.sourceName;
       const sourceId = sourceClass.sourceId;
+      const site = sourceClass.site;
 
       if (this.sourcesRegistry.isDisabled(sourceId)) {
         this.logger.debug(`Skipping source scan "${sourceId}" for "${nickname}" because the source is disabled.`);
@@ -60,6 +61,7 @@ export class SourcesProcessor extends WorkerHost {
         sourceScan = await this.sourceScanRepository.createPending({
           profileUrl: profileUrl,
           sourceName: sourceName,
+          site: site,
           nickname: nickname,
           sourceId: sourceId,
         });

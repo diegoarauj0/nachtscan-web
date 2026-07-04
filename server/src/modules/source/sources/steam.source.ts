@@ -7,6 +7,7 @@ import { Injectable } from "@nestjs/common";
 export class SteamSource implements InterfaceBaseSource {
   public readonly sourceId: SourceId.Steam = SourceId.Steam;
   public readonly sourceName: string = "Steam";
+  public readonly site: string = "https://steamcommunity.com";
 
   public readonly cacheExpiresInMs: number = 6 * 60 * 60 * 1000;
 

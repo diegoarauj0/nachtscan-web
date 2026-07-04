@@ -18,6 +18,7 @@ export class MastodonSource implements InterfaceBaseSource {
 
   public readonly sourceId: SourceId.Mastodon = SourceId.Mastodon;
   public readonly sourceName: string = "Mastodon";
+  public readonly site: string = "https://mastodon.social";
 
   public readonly cacheExpiresInMs: number = 12 * 60 * 60 * 1000;
 

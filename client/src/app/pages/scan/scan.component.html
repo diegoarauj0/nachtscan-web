@@ -1,0 +1,97 @@
+<main class="scan">
+  @if (state().error === true && (state().data === null || state().data?.sources?.length === 0)) {
+    <div class="error-screen">
+      <div class="error-content">
+        <div class="error-icon">
+          <svg lucideCircleAlert></svg>
+        </div>
+        <h1 class="error-title">Nenhum dado encontrado</h1>
+        <p class="error-text">
+          Não foi possível carregar os dados deste usuário.
+          <br />
+          O servidor pode estar indisponivel no momento.
+        </p>
+        <a class="back-home" [routerLink]="['/']"><svg lucideArrowLeft></svg> volta ao início</a>
+      </div>
+    </div>
+  }
+
+  @if (state().data === null) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p class="loading-text">
+        Carregando
+        <br />
+        ...
+      </p>
+    </div>
+  }
+
+  @if (state().data !== null && state().data?.sources!.length > 0) {
+    <div class="center">
+      <div class="top-content">
+        <a class="back-home" [routerLink]="['/']"><svg lucideArrowLeft></svg> volta ao início</a>
+        <p class="description">data do escaneamento: {{ state().data!.scan.startedAt }}</p>
+
+        <div class="profile-content {{ state().data!.scan.status }}">
+          <div class="avatar">{{ state().data!.scan.nickname[0].toUpperCase() }}</div>
+          <p class="nickname">@{{ state().data!.scan.nickname }}</p>
+          <p class="description">
+            @if (state().data!.scan.status === "pending") {
+              O sistema esta buscando os dados.
+            }
+
+            @if (state().data!.scan.status === "failed") {
+              Não foi possivel buscar dados mais recentes.
+            }
+
+            @if (state().data!.scan.status === "completed") {
+              Buscas completadas com sucesso.
+            }
+          </p>
+
+          <div class="status">
+            <p class="not-found count"><span>Disponíveis</span>{{ state().data!.notFound }}</p>
+            <p class="found count"><span>Ocupados</span>{{ state().data!.found }}</p>
+            <p class="total count"><span>Total</span>{{ state().data!.length }}</p>
+          </div>
+
+          <button class="copy {{ copied() ? 'copied' : '' }}" (click)="copyNickname()" [disabled]="copied()">
+            @if (copied() === true) {
+              <svg lucideCopyCheck></svg>Copiado
+            } @else {
+              <svg lucideCopy></svg>Copiar
+            }
+          </button>
+        </div>
+      </div>
+
+      <div class="menu-content">
+        <h2><svg lucideCompass></svg> Rede sociais</h2>
+        <div class="menu">
+          <ul>
+            <li>
+              <button class="{{ filter() === 'all' ? 'activated' : '' }}" (click)="changeStatus('all')">todos</button>
+            </li>
+            <li>
+              <button class="{{ filter() === 'not_found' ? 'activated' : '' }}" (click)="changeStatus('not_found')">
+                livres
+              </button>
+            </li>
+            <li>
+              <button class="{{ filter() === 'found' ? 'activated' : '' }}" (click)="changeStatus('found')">
+                ocupadas
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="sources">
+        @for (source of filteredSources(); track $index) {
+          <app-source [source]="source" />
+        }
+      </div>
+    </div>
+  }
+</main>

@@ -65,7 +65,7 @@ describe("SourceScanRepository", () => {
       const key = sourceScanRepository["sourceScanKey"]("test", SourceId.GitHub);
 
       expect(mockRedis.get).toHaveBeenCalledWith(key);
-      expect(result).toStrictEqual({ github: sourceScan });
+      expect(result).toStrictEqual([sourceScan]);
     });
 
     it("Deve ignorar 'source scans' ausentes.", async () => {
@@ -74,7 +74,7 @@ describe("SourceScanRepository", () => {
 
       const result = await sourceScanRepository.findSourceScans("test");
 
-      expect(result).toStrictEqual({});
+      expect(result).toStrictEqual([]);
     });
   });
 
@@ -86,10 +86,16 @@ describe("SourceScanRepository", () => {
         profileUrl: "https://github.com/test",
         sourceId: SourceId.GitHub,
         sourceName: "Github",
+        site: "https://github.com",
         nickname: "test",
       });
 
-      const sourceScan = sourceScanRepository["createPendingSourceScan"]("github", "Github", "https://github.com/test");
+      const sourceScan = sourceScanRepository["createPendingSourceScan"](
+        SourceId.GitHub,
+        "Github",
+        "https://github.com/test",
+        "https://github.com",
+      );
 
       expect(result).toStrictEqual(sourceScan);
     });
@@ -101,6 +107,7 @@ describe("SourceScanRepository", () => {
         profileUrl: "https://github.com/test",
         sourceId: SourceId.GitHub,
         sourceName: "Github",
+        site: "https://github.com",
         nickname: "test",
       });
 
@@ -118,6 +125,7 @@ describe("SourceScanRepository", () => {
           profileUrl: "https://github.com/test",
           sourceId: SourceId.GitHub,
           sourceName: "Github",
+          site: "https://github.com",
           nickname: "test",
         }),
       ).rejects.toBeInstanceOf(Error);

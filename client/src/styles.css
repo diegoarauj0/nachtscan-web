@@ -1,1 +1,81 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+:root {
+  /* hsl (fallback color) */
+  --bg-dark: hsl(233 52% 92%);
+  --bg: hsl(233 100% 97%);
+  --bg-light: hsl(233 100% 100%);
+  --text: hsl(242 62% 8%);
+  --text-muted: hsl(235 20% 32%);
+  --highlight: hsl(234 100% 100%);
+  --border: hsl(234 16% 55%);
+  --border-muted: hsl(234 23% 67%);
+  --primary: hsl(239 33% 36%);
+  --secondary: hsl(53 100% 12%);
+  --danger: hsl(9 21% 41%);
+  --warning: hsl(52 23% 34%);
+  --success: hsl(147 19% 36%);
+  --info: hsl(217 22% 41%);
+  /* oklch */
+  --bg-dark: oklch(0.92 0.025 280);
+  --bg: oklch(0.96 0.025 280);
+  --bg-light: oklch(1 0.025 280);
+  --text: oklch(0.15 0.05 280);
+  --text-muted: oklch(0.4 0.05 280);
+  --highlight: oklch(1 0.05 280);
+  --border: oklch(0.6 0.05 280);
+  --border-muted: oklch(0.7 0.05 280);
+  --primary: oklch(0.4 0.1 280);
+  --secondary: oklch(0.4 0.1 100);
+  --danger: oklch(0.5 0.05 30);
+  --warning: oklch(0.5 0.05 100);
+  --success: oklch(0.5 0.05 160);
+  --info: oklch(0.5 0.05 260);
+
+  --font-monospace: "JetBrains Mono", monospace;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+[data-theme="dark"]  {
+  /* hsl (fallback color) */
+  --bg-dark: hsl(239 61% 3%);
+  --bg: hsl(236 41% 6%);
+  --bg-light: hsl(235 26% 10%);
+  --text: hsl(234 100% 100%);
+  --text-muted: hsl(234 30% 74%);
+  --highlight: hsl(235 16% 43%);
+  --border: hsl(235 20% 32%);
+  --border-muted: hsl(236 27% 22%);
+  --primary: hsl(235 71% 79%);
+  --secondary: hsl(51 42% 57%);
+  --danger: hsl(9 26% 64%);
+  --warning: hsl(52 19% 57%);
+  --success: hsl(146 17% 59%);
+  --info: hsl(217 28% 65%);
+  /* oklch */
+  --bg-dark: oklch(0.1 0.025 280);
+  --bg: oklch(0.15 0.025 280);
+  --bg-light: oklch(0.2 0.025 280);
+  --text: oklch(0.96 0.05 280);
+  --text-muted: oklch(0.76 0.05 280);
+  --highlight: oklch(0.5 0.05 280);
+  --border: oklch(0.4 0.05 280);
+  --border-muted: oklch(0.3 0.05 280);
+  --primary: oklch(0.76 0.1 280);
+  --secondary: oklch(0.76 0.1 100);
+  --danger: oklch(0.7 0.05 30);
+  --warning: oklch(0.7 0.05 100);
+  --success: oklch(0.7 0.05 160);
+  --info: oklch(0.7 0.05 260);
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}

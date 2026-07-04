@@ -6,6 +6,7 @@ import { Injectable } from "@nestjs/common";
 export class MinecraftSource implements InterfaceBaseSource {
   public readonly sourceId: SourceId = SourceId.Minecraft;
   public readonly sourceName: string = "Minecraft";
+  public readonly site: string = "https://www.minecraft.net";
 
   public readonly cacheExpiresInMs: number = 3 * 60 * 60 * 1000;
 

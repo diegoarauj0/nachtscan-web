@@ -45,6 +45,10 @@ describe("ScanController", () => {
   describe("ScanController.findStatusNickname", () => {
     it("Deve retornar o 'scan' e as 'sources' quando encontrado.", async () => {
       const expected = {
+        failures: 0,
+        found: 0,
+        length: 1,
+        notFound: 0,
         scan: { nickname: "octocat", status: "pending" },
         sources: { github: { sourceId: "github", status: "pending" } },
       };

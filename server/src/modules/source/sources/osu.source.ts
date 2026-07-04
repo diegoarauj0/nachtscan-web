@@ -23,6 +23,7 @@ export class OsuSource implements InterfaceBaseSource {
 
   public readonly sourceId: SourceId = SourceId.Osu;
   public readonly sourceName: string = "Osu!";
+  public readonly site: string = "https://osu.ppy.sh";
 
   public readonly cacheExpiresInMs: number = 6 * 60 * 60 * 1000;
 

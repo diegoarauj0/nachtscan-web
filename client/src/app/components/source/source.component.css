@@ -1,0 +1,176 @@
+.source {
+  height: 200px;
+  width: 370px;
+
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: 50px auto 50px;
+}
+
+.source.failed {
+  border: 2px solid color-mix(in oklab, var(--danger) 90%);
+
+  background-color: var(--bg);
+}
+
+.source.not_found {
+  border: 2px solid color-mix(in oklab, var(--border) 90%);
+
+  background-color: var(--bg-light);
+}
+
+.source.found {
+  border: 2px solid color-mix(in oklab, var(--border) 50%);
+
+  background-color: var(--bg);
+}
+
+.source.pending {
+  border: 2px solid color-mix(in oklab, var(--warning) 50%);
+
+  background-color: var(--bg);
+}
+
+.header {
+  width: 100%;
+
+  padding: 15px;
+
+  gap: 10px;
+
+  display: grid;
+  align-self: center;
+  grid-template-columns: 20px auto 25px;
+}
+
+.header > img {
+  filter: invert(100%);
+
+  height: 20px;
+
+  margin-right: 10px;
+}
+
+.header > svg {
+  color: var(--success);
+}
+
+.found .header > svg {
+  color: color-mix(in oklab, var(--text) 50%);
+}
+
+.failed .header > svg {
+  color: var(--danger);
+}
+
+.pending .header > svg {
+  color: var(--danger);
+}
+
+.failed .header > p {
+  color: var(--danger);
+}
+
+.pending .header > p {
+  color: var(--warning);
+}
+
+.header > p {
+  color: var(--text);
+
+  font-weight: 600;
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+}
+
+.main {
+  padding: 5px 15px;
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: start;
+  justify-content: center;
+}
+
+.main > .title {
+  font-family: var(--font-inter);
+  font-weight: 800;
+  font-size: 1.3rem;
+
+  color: var(--text);
+
+  width: 100%;
+
+  margin-bottom: 5px;
+}
+
+.failed .main > .title {
+  color: var(--danger);
+}
+
+.pending .main > .title {
+  color: var(--warning);
+}
+
+.main > .description {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  font-family: var(--font-monospace);
+
+  width: 100%;
+
+  opacity: 50%;
+  color: var(--text);
+}
+
+.failed .main > .description {
+  color: var(--danger);
+}
+
+.pending .main > .description {
+  color: var(--warning);
+}
+
+.footer {
+  border-top: 1px solid color-mix(in oklab, var(--border) 50%);
+
+  padding: 0px 10px;
+
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer > .site {
+  color: var(--text);
+
+  display: flex;
+  align-items: center;
+
+  font-family: var(--font-monospace);
+  text-transform: uppercase;
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+
+.footer > .site > svg {
+  margin-right: 5px;
+  height: 20px;
+}
+
+.footer > .profile {
+  color: var(--text);
+
+  display: flex;
+  align-items: center;
+
+  font-family: var(--font-monospace);
+  text-transform: uppercase;
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+
+.footer > .profile > svg {
+  margin-left: 5px;
+  height: 20px;
+}

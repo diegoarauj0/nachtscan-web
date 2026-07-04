@@ -1,0 +1,16 @@
+footer {
+  align-items: center;
+  display: flex;
+
+  padding: 0px 15px;
+
+  background-color: var(--bg-dark);
+  color: var(--text-muted);
+
+  border-top: 1px solid color-mix(in oklab, var(--border-muted) 30%, transparent);
+
+  font-size: 0.6rem;
+  text-transform: uppercase;
+
+  height: 50px;
+}

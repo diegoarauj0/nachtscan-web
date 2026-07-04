@@ -11,7 +11,7 @@ import { InjectQueue } from "@nestjs/bullmq";
 import { Job, Queue } from "bullmq";
 
 interface InterfaceFindStatusNickname {
-  sources: Record<string, InterfaceSourceScan>;
+  sources: InterfaceSourceScan[];
   scan: InterfaceScan;
 }
 
@@ -136,10 +136,11 @@ export class ScanService implements OnModuleInit, OnModuleDestroy {
       const sources = await this.sourceScanRepository.findSourceScans(nickname);
       let complete = true;
 
-      this.sourcesRegistry.sourcesInArray().forEach((source) => {
-        const sourceId = source.sourceId;
+      this.sourcesRegistry.sourcesInArray().forEach((sourceClass) => {
+        const sourceId = sourceClass.sourceId;
+        const source = sources.find((source) => source.sourceId === sourceId);
 
-        if (sources[sourceId] === undefined || sources[sourceId].status === "pending") {
+        if (source === undefined || source.status === "pending") {
           complete = false;
         }
       });

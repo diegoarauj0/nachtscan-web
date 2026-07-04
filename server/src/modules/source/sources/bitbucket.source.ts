@@ -7,6 +7,7 @@ import { Injectable } from "@nestjs/common";
 export class BitbucketSource implements InterfaceBaseSource {
   public readonly sourceId: SourceId = SourceId.BitBucket;
   public readonly sourceName: string = "Bitbucket";
+  public readonly site: string = "https://bitbucket.org";
 
   public readonly cacheExpiresInMs: number = 12 * 60 * 60 * 1000;
 

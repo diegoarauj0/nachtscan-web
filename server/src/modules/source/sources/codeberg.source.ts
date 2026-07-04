@@ -7,6 +7,7 @@ import { Injectable } from "@nestjs/common";
 export class CodebergSource implements InterfaceBaseSource {
   public readonly sourceId: SourceId.CodeBerg = SourceId.CodeBerg;
   public readonly sourceName: string = "Codeberg";
+  public readonly site: string = "https://codeberg.org";
 
   public readonly cacheExpiresInMs: number = 12 * 60 * 60 * 1000;
 

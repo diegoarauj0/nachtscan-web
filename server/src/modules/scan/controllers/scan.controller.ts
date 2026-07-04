@@ -1,15 +1,8 @@
 import { FindStatusNicknameResponseDto, SourceScanDto } from "../dto/scanStatusResponse.dto";
-import { InterfaceSourceScan } from "@/modules/source/source.type";
 import { ScanService } from "../services/scan.service";
-import { InterfaceScan } from "../scan.type";
 import { Throttle } from "@nestjs/throttler";
 import * as Swagger from "@nestjs/swagger";
 import * as NestJs from "@nestjs/common";
-
-interface InterfaceFindStatusNicknameResponse {
-  sources: Record<string, InterfaceSourceScan>;
-  scan: InterfaceScan;
-}
 
 @NestJs.Controller()
 @Swagger.ApiTags("scan")
@@ -38,9 +31,7 @@ export class ScanController {
   @Swagger.ApiOkResponse({ description: "Scan status found.", type: FindStatusNicknameResponseDto })
   @Swagger.ApiNotFoundResponse({ description: "Scan not found." })
   @Throttle({ default: { limit: 30, ttl: 60000 } })
-  public async findStatusNickname(
-    @NestJs.Param("nickname") nickname: string,
-  ): Promise<InterfaceFindStatusNicknameResponse> {
+  public async findStatusNickname(@NestJs.Param("nickname") nickname: string): Promise<FindStatusNicknameResponseDto> {
     if (nickname === "" || nickname === undefined) {
       throw new NestJs.BadRequestException("Nickname not defined.");
     }
@@ -49,6 +40,15 @@ export class ScanController {
 
     if (result === null) throw new NestJs.NotFoundException("Scan not found.");
 
-    return result;
+    const sourcesInArray = Object.values(result.sources);
+
+    return {
+      notFound: sourcesInArray.filter((source) => source.status === "not_found").length,
+      failures: sourcesInArray.filter((source) => source.status === "failed").length,
+      found: sourcesInArray.filter((source) => source.status === "found").length,
+      length: sourcesInArray.length,
+      sources: result.sources,
+      scan: result.scan,
+    };
   }
 }

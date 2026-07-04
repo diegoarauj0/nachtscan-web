@@ -7,6 +7,7 @@ import { Injectable } from "@nestjs/common";
 export class GitlabSource implements InterfaceBaseSource {
   public readonly sourceId: SourceId = SourceId.GitLab;
   public readonly sourceName: string = "Gitlab";
+  public readonly site: string = "https://gitlab.com";
 
   public readonly cacheExpiresInMs: number = 12 * 60 * 60 * 1000;
 

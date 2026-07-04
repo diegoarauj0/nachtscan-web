@@ -24,6 +24,9 @@ export class SourceScanDto {
   @ApiProperty({ example: "Github" })
   public sourceName!: string;
 
+  @ApiProperty({ example: "https://github.com" })
+  public site!: string;
+
   @ApiProperty({ enum: ["pending", "found", "not_found", "failed"], example: "found" })
   public status!: "pending" | "found" | "not_found" | "failed";
 
@@ -58,10 +61,11 @@ export class FindStatusNicknameResponseDto {
 
   @ApiProperty({
     additionalProperties: { $ref: getSchemaPath(SourceScanDto) },
-    example: {
-      github: {
+    example: [
+      {
         sourceId: "github",
         sourceName: "Github",
+        site: "https://github.com",
         status: "found",
         profileUrl: "https://github.com/octocat",
         cached: false,
@@ -72,8 +76,20 @@ export class FindStatusNicknameResponseDto {
         completedAt: "2026-06-28T12:00:03.000Z",
         error: null,
       },
-    },
-    type: "object",
+    ],
+    type: "array",
   })
-  public sources!: Record<string, SourceScanDto>;
+  public sources!: SourceScanDto[];
+
+  @ApiProperty({ type: "number" })
+  public length!: number;
+
+  @ApiProperty({ type: "number" })
+  public found!: number;
+
+  @ApiProperty({ type: "number" })
+  public notFound!: number;
+
+  @ApiProperty({ type: "number" })
+  public failures!: number;
 }

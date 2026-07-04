@@ -7,6 +7,7 @@ import { Injectable } from "@nestjs/common";
 export class DevToSource implements InterfaceBaseSource {
   public readonly sourceId: SourceId = SourceId.DevTo;
   public readonly sourceName: string = "Dev.to";
+  public readonly site: string = "https://dev.to";
 
   public readonly cacheExpiresInMs: number = 12 * 60 * 60 * 1000;
 

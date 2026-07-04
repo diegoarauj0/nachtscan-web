@@ -5,6 +5,7 @@ import { SourcesRegistry } from "../sources.registry";
 import Redis from "ioredis";
 
 interface InterfaceCreatePendingProps {
+  site: string;
   profileUrl: string;
   sourceName: string;
   sourceId: SourceId;
@@ -45,8 +46,8 @@ export class SourceScanRepository {
     return JSON.parse(stringify) as InterfaceSourceScan;
   }
 
-  public async findSourceScans(nickname: string): Promise<Record<string, InterfaceSourceScan>> {
-    const sources: Partial<Record<SourceId, InterfaceSourceScan>> = {};
+  public async findSourceScans(nickname: string): Promise<InterfaceSourceScan[]> {
+    const sources: InterfaceSourceScan[] = [];
     const sourceIds = this.sourcesRegistry.sourcesInArray();
 
     for (const { sourceId } of sourceIds) {
@@ -57,18 +58,18 @@ export class SourceScanRepository {
 
       const sourceScan = JSON.parse(stringify) as InterfaceSourceScan;
 
-      sources[sourceId] = sourceScan;
+      sources.push(sourceScan);
     }
 
     return sources;
   }
 
   public async createPending(props: InterfaceCreatePendingProps): Promise<InterfaceSourceScan> {
-    const { nickname, profileUrl, sourceId, sourceName } = props;
+    const { nickname, profileUrl, sourceId, sourceName, site } = props;
 
     this.logger.debug(`Creating pending source scan "${sourceId}" for "${nickname}".`);
 
-    const sourceScan = this.createPendingSourceScan(sourceId, sourceName, profileUrl);
+    const sourceScan = this.createPendingSourceScan(sourceId, sourceName, profileUrl, site);
     const sourceScanKey = this.sourceScanKey(nickname, sourceId);
 
     const result = await this.redis.set(sourceScanKey, JSON.stringify(sourceScan), "EX", this.SOURCE_SCAN_TTL, "NX");
@@ -161,12 +162,18 @@ export class SourceScanRepository {
     return `scan:${nickname}:${sourceId}`;
   }
 
-  private createPendingSourceScan(sourceId: string, sourceName: string, profileUrl: string): InterfaceSourceScan {
+  private createPendingSourceScan(
+    sourceId: SourceId,
+    sourceName: string,
+    profileUrl: string,
+    site: string,
+  ): InterfaceSourceScan {
     const now = new Date();
 
     return {
       sourceId: sourceId,
       sourceName: sourceName,
+      site: site,
       status: "pending",
       cached: false,
       cachedAt: null,

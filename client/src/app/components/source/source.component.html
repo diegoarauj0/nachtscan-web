@@ -1,0 +1,65 @@
+<section class="source {{ source.status }}">
+  <div class="header">
+    <img src="images/{{ source.sourceId }}.svg" alt="{{ source.sourceName }} logo" />
+    <p>{{ source.sourceName }}</p>
+    @if (source.status === "found") {
+      <svg lucideCircleQuestionMark></svg>
+    }
+
+    @if (source.status === "not_found") {
+      <svg lucideCircleCheckBig></svg>
+    }
+
+    @if (source.status === "failed") {
+      <svg lucideCircleX></svg>
+    }
+
+    @if (source.status === "pending") {
+      <svg lucideCircleDashed></svg>
+    }
+  </div>
+
+  <div class="main">
+    <p class="title">
+      @if (source.status === "found") {
+        Ocupado
+      }
+
+      @if (source.status === "not_found") {
+        Disponível
+      }
+
+      @if (source.status === "failed") {
+        Quebrado
+      }
+
+      @if (source.status === "pending") {
+        Buscando...
+      }
+    </p>
+    <p class="description">
+      @if (source.status === "found") {
+        Alguem ja esta usando esse nome
+      }
+
+      @if (source.status === "not_found") {
+        Esse nome esta livre para uso
+      }
+
+      @if (source.status === "failed") {
+        Não foi possivel achar executar essa font
+      }
+
+      @if (source.status === "pending") {
+        Buscando esse nickname pelo {{ source.sourceName }}
+      }
+    </p>
+  </div>
+
+  <div class="footer">
+    <a [href]="source.site" class="site"><svg lucideGlobe></svg>site</a>
+    @if (source.status === "found") {
+      <a [href]="source.profileUrl" class="profile">perfil<svg lucideUserRoundArrowLeft></svg></a>
+    }
+  </div>
+</section>

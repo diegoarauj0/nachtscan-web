@@ -14,6 +14,7 @@ export enum SourceId {
 export interface InterfaceBaseSource {
   readonly sourceId: SourceId;
   readonly sourceName: string;
+  readonly site: string;
 
   readonly cacheExpiresInMs: number;
   readonly profileUrl: (nickname: string) => string;
@@ -24,8 +25,9 @@ export interface InterfaceBaseSource {
 }
 
 export interface InterfaceSourceScan {
-  sourceId: string;
+  sourceId: SourceId;
   sourceName: string;
+  site: string;
 
   status: "pending" | "found" | "not_found" | "failed";
 

@@ -6,6 +6,7 @@ import { Injectable } from "@nestjs/common";
 export class BlueskySource implements InterfaceBaseSource {
   public readonly sourceId: SourceId = SourceId.Bluesky;
   public readonly sourceName: string = "Bluesky";
+  public readonly site: string = "https://bsky.app";
 
   public readonly cacheExpiresInMs: number = 6 * 60 * 60 * 1000;
 

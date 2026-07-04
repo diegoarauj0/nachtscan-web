@@ -58,6 +58,7 @@ describe("ScanProcessor", () => {
       mockSourcesRegistry.get.mockReturnValue({
         sourceId: SourceId.GitHub,
         sourceName: "Github",
+        site: "https://github.com",
         profileUrl: () => "https://github.com/test",
       } as any);
       mockSourcesRegistry.isDisabled.mockReturnValue(true);
@@ -78,6 +79,7 @@ describe("ScanProcessor", () => {
         profileUrl: () => "https://github.com/test",
         sourceId: SourceId.GitHub,
         sourceName: "Github",
+        site: "https://github.com",
         scan: mockScan,
       } as any);
       mockSourcesRegistry.isDisabled.mockReturnValue(false);
@@ -97,6 +99,7 @@ describe("ScanProcessor", () => {
         profileUrl: () => "https://github.com/test",
         sourceId: SourceId.GitHub,
         sourceName: "Github",
+        site: "https://github.com",
         scan: mockScan,
       } as any);
       mockSourceScanRepository.findSourceScan.mockResolvedValue({
@@ -116,6 +119,7 @@ describe("ScanProcessor", () => {
       const sourceClass = {
         sourceId: SourceId.GitHub,
         sourceName: "Github",
+        site: "https://github.com",
         profileUrl: jest.fn().mockReturnValue("https://github.com/test"),
         scan: mockScan,
         cacheExpiresInMs: 3600000,
@@ -143,6 +147,7 @@ describe("ScanProcessor", () => {
       const sourceClass = {
         sourceId: SourceId.GitHub,
         sourceName: "Github",
+        site: "https://github.com",
         profileUrl: jest.fn().mockReturnValue("https://github.com/test"),
         scan: mockScan,
         cacheExpiresInMs: 3600000,
@@ -159,6 +164,7 @@ describe("ScanProcessor", () => {
       expect(mockSourceScanRepository.createPending).toHaveBeenCalledWith({
         profileUrl: "https://github.com/test",
         sourceName: "Github",
+        site: "https://github.com",
         nickname: "test",
         sourceId: SourceId.GitHub,
       });
@@ -172,6 +178,7 @@ describe("ScanProcessor", () => {
       const sourceClass = {
         sourceId: SourceId.GitHub,
         sourceName: "Github",
+        site: "https://github.com",
         profileUrl: jest.fn().mockReturnValue("https://github.com/test"),
         scan: mockScan,
         cacheExpiresInMs: 3600000,
@@ -199,6 +206,7 @@ describe("ScanProcessor", () => {
       const sourceClass = {
         sourceId: SourceId.GitHub,
         sourceName: "Github",
+        site: "https://github.com",
         profileUrl: jest.fn().mockReturnValue("https://github.com/test"),
         scan: mockScan,
         cacheExpiresInMs: 3600000,
@@ -227,6 +235,7 @@ describe("ScanProcessor", () => {
       const sourceClass = {
         sourceId: SourceId.GitHub,
         sourceName: "Github",
+        site: "https://github.com",
         profileUrl: jest.fn().mockReturnValue("https://github.com/test"),
         scan: mockScan,
         cacheExpiresInMs: 3600000,
