@@ -9,7 +9,7 @@
 }
 
 .center {
-  width: 550px;
+  width: min(550px, 92%);
   display: flex;
   flex-wrap: wrap;
   align-content: start;
@@ -97,4 +97,29 @@
 
 .scan > button:hover {
   background-color: var(--text-muted);
+}
+
+@media (max-width: 600px) {
+  .center {
+    margin-top: 40px;
+  }
+
+  .about > h1 {
+    font-size: 2.4rem;
+  }
+
+  .about > p {
+    font-size: 0.9rem;
+    padding: 0 10px;
+  }
+
+  .scan {
+    grid-template-columns: 40px 1fr 110px;
+    height: 56px;
+  }
+
+  .scan > button {
+    font-size: 0.7rem;
+    letter-spacing: 0.05rem;
+  }
 }

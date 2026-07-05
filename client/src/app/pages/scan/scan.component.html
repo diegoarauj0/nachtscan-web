@@ -16,7 +16,7 @@
     </div>
   }
 
-  @if (state().data === null) {
+  @if (state().data === null && state().error === false) {
     <div class="loading">
       <div class="spinner"></div>
       <p class="loading-text">
@@ -27,7 +27,7 @@
     </div>
   }
 
-  @if (state().data !== null && state().data?.sources!.length > 0) {
+  @if (state().data !== null) {
     <div class="center">
       <div class="top-content">
         <a class="back-home" [routerLink]="['/']"><svg lucideArrowLeft></svg> volta ao início</a>
@@ -35,20 +35,22 @@
 
         <div class="profile-content {{ state().data!.scan.status }}">
           <div class="avatar">{{ state().data!.scan.nickname[0].toUpperCase() }}</div>
-          <p class="nickname">@{{ state().data!.scan.nickname }}</p>
-          <p class="description">
-            @if (state().data!.scan.status === "pending") {
-              O sistema esta buscando os dados.
-            }
+          <div class="texts">
+            <p class="nickname">@{{ state().data!.scan.nickname }}</p>
+            <p class="description">
+              @if (state().data!.scan.status === "pending") {
+                O sistema esta buscando os dados.
+              }
 
-            @if (state().data!.scan.status === "failed") {
-              Não foi possivel buscar dados mais recentes.
-            }
+              @if (state().data!.scan.status === "failed") {
+                Não foi possivel buscar dados mais recentes.
+              }
 
-            @if (state().data!.scan.status === "completed") {
-              Buscas completadas com sucesso.
-            }
-          </p>
+              @if (state().data!.scan.status === "completed") {
+                Buscas completadas com sucesso.
+              }
+            </p>
+          </div>
 
           <div class="status">
             <p class="not-found count"><span>Disponíveis</span>{{ state().data!.notFound }}</p>

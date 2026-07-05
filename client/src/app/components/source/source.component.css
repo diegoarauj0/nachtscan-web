@@ -1,6 +1,6 @@
 .source {
-  height: 200px;
-  width: 370px;
+  height: 100%;
+  width: 100%;
 
   display: grid;
   grid-template-columns: auto;
