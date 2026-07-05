@@ -1,0 +1,90 @@
+.not-found {
+  background-color: var(--bg-dark);
+  width: 100%;
+  min-height: calc(100% - 50px);
+}
+
+.error-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80dvh;
+  width: 100%;
+}
+
+.error-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 400px;
+  text-align: center;
+}
+
+.error-icon {
+  color: var(--warning);
+  width: 80px;
+  height: 80px;
+  margin-bottom: 8px;
+}
+
+.error-code {
+  color: color-mix(in oklab, var(--text-muted) 30%);
+  font-family: var(--font-monospace);
+  font-size: 6rem;
+  font-weight: 900;
+  line-height: 1;
+  margin: 0;
+}
+
+.error-title {
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.error-text {
+  color: color-mix(in oklab, var(--text-muted) 50%);
+  font-family: var(--font-monospace);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+  line-height: 1.6;
+  margin: 0 0 16px;
+}
+
+.back-home {
+  transition: 0.3s;
+
+  width: 230px;
+  height: 40px;
+
+  border: 1px solid color-mix(in oklab, var(--border) 50%);
+  outline: transparent;
+
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+
+  color: var(--text);
+  font-family: var(--font-monospace);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: var(--bg-light);
+}
+
+.back-home:hover {
+  transition: 0.2s;
+  transform: translate(-10px);
+}
+
+.back-home > svg {
+  margin-right: 10px;
+  color: color-mix(in oklab, var(--text) 90%);
+}
