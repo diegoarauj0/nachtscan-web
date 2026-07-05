@@ -5,11 +5,12 @@
   min-height: calc(100% - 50px);
 
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 .center {
-  width: min(550px, 92%);
+  width: min(590px, 92%);
   display: flex;
   flex-wrap: wrap;
   align-content: start;
@@ -99,7 +100,159 @@
   background-color: var(--text-muted);
 }
 
-@media (max-width: 600px) {
+.status {
+    transition: 0.1s;
+  border: 2px solid color-mix(in oklab, var(--border) 90%);
+
+  width: 290px;
+
+  padding: 15px;
+
+  background-color: var(--bg-light);
+
+  text-decoration: none;
+
+  display: grid;
+  grid-template-columns: 1fr 20px;
+  grid-template-rows: 1fr 1fr;
+}
+
+.status:hover {
+  transition: 0.2s;
+  transform: scale(102%);
+}
+
+.nickname {
+  color: var(--text);
+
+  font-weight: 700;
+  font-family: var(--font-sans);
+
+  margin-bottom: 5px;
+
+  grid-column: 1 / 1;
+  grid-row: 1 / 1;
+}
+
+.texts {
+  display: flex;
+  align-items: center;
+
+  grid-column: 1 / 1;
+  grid-row: 2 / 2;
+}
+
+.localHistory {
+  margin-top: 30px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-auto-rows: 80px;
+  gap: 20px;
+}
+
+.texts > p {
+  margin: 0px 3px;
+}
+
+.percentage {
+  font-size: 0.9rem;
+  font-family: var(--font-monospace);
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+.percentage.force-0 {
+  color: var(--danger);
+}
+
+.percentage.force-1 {
+  color: var(--warning);
+}
+
+.percentage.force-2 {
+  color: var(--info);
+}
+
+.percentage.force-3 {
+  color: var(--success);
+}
+
+.sources {
+  color: color-mix(in oklab, var(--text) 60%);
+  font-family: var(--font-monospace);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+.svg-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-row: 1 / 3;
+}
+
+.svg-content > svg {
+  color: var(--text-muted);
+}
+
+.localHistory > div {
+  grid-column: 1 / -1;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.clear-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  background-color: transparent;
+  color: color-mix(in oklab, var(--text-muted) 70%);
+
+  border: 1px solid color-mix(in oklab, var(--border-muted) 90%, transparent);
+  border-radius: 6px;
+
+  padding: 6px 12px;
+
+  cursor: pointer;
+
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+}
+
+.clear-btn:hover {
+  background-color: color-mix(in oklab, var(--danger) 15%, transparent);
+  color: var(--danger);
+  border-color: color-mix(in oklab, var(--danger) 30%, transparent);
+}
+
+.clear-btn > svg {
+  width: 14px;
+  height: 14px;
+}
+
+.title {
+  color: var(--text);
+
+  font-family: var(--font-monospace);
+  text-transform: uppercase;
+  font-size: 1rem;
+}
+
+@media (max-width: 950px) {
+  .localHistory {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 650px) {
   .center {
     margin-top: 40px;
   }
@@ -121,5 +274,39 @@
   .scan > button {
     font-size: 0.7rem;
     letter-spacing: 0.05rem;
+  }
+
+  .localHistory {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 110px;
+    width: 90%;
+  }
+
+  .status {
+    width: 100%;
+  }
+
+  .texts > p {
+    margin: 0px 3px;
+  }
+
+  .nickname {
+    font-size: 1.4rem;
+  }
+
+  .percentage {
+    font-size: 1.2rem;
+  }
+
+  .sources {
+    font-size: 0.9rem;
+  }
+
+  .scan  {
+    height: 80px;
+  }
+
+  .scan > input {
+    font-size: 1.2rem;
   }
 }

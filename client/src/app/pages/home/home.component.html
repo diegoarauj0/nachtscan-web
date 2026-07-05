@@ -4,7 +4,7 @@
       <h1>Identifique sua presença digital.</h1>
       <p>
         Verifique a disponibilidade do seu nickname instantaneamente em várias redes sociais e receba conselhos e
-        alternativas inteligentes de branding pessoal geradas por IA.
+        alternativas inteligentes de branding pessoal.
       </p>
     </section>
 
@@ -14,4 +14,26 @@
       <button>escanear</button>
     </form>
   </div>
+
+  @if (sources().length > 0) {
+    <div class="localHistory">
+      <div>
+        <h1 class="title">Histórico de Varreduras ({{ sources().length }})</h1>
+        <button class="clear-btn" (click)="resetHistory()">limpa <svg lucideTrash></svg></button>
+      </div>
+      @for (status of sources(); track $index) {
+        <a class="status" [routerLink]="[`u/${status.nickname}`]">
+          <p class="nickname">@{{ status.nickname }}</p>
+          <div class="texts">
+            <p class="percentage force-{{ status.force }}">{{ status.percentage }}% livre</p>
+            <p class="sources">•</p>
+            <p class="sources">{{ status.notFound }}/{{ status.total }} fontes</p>
+          </div>
+          <div class="svg-content">
+            <svg lucideArrowRight></svg>
+          </div>
+        </a>
+      }
+    </div>
+  }
 </main>

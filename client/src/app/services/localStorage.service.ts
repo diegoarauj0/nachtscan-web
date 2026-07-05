@@ -1,22 +1,22 @@
 import { Service } from "@angular/core";
 
 @Service()
-export class SessionStorageService {
+export class LocalStorageService {
   public set<T>(key: string, value: T): void {
-    sessionStorage.setItem(key, JSON.stringify(value));
+    localStorage.setItem(key, JSON.stringify(value));
   }
 
   public get<T>(key: string): T | null {
-    const value = sessionStorage.getItem(key);
+    const value = localStorage.getItem(key);
 
     return value ? (JSON.parse(value) as T) : null;
   }
 
   public remove(key: string): void {
-    sessionStorage.removeItem(key);
+    localStorage.removeItem(key);
   }
 
   public clear(): void {
-    sessionStorage.clear();
+    localStorage.clear();
   }
 }

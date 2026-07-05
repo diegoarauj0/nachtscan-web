@@ -6,6 +6,7 @@ import { SourceComponent } from "../../components/source/source.component";
 import { InterfaceSourceScan } from "../../types/nachtscan.type";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { LocalStorageService } from "../../services/localStorage.service";
 
 interface InterfaceState {
   data: InterfaceFindStatusNicknameData | null;
@@ -22,11 +23,20 @@ interface InterfaceState {
 @Component({
   standalone: true,
   selector: "app-scan",
-  imports: [LucideCircleAlert, LucideArrowLeft, RouterLink, LucideCopy, LucideCompass, SourceComponent, LucideCopyCheck],
+  imports: [
+    LucideCircleAlert,
+    LucideArrowLeft,
+    RouterLink,
+    LucideCopy,
+    LucideCompass,
+    SourceComponent,
+    LucideCopyCheck,
+  ],
   templateUrl: "./scan.component.html",
   styleUrl: "./scan.component.css",
 })
 export class ScanComponent implements OnInit {
+  private readonly localStorageService = inject(LocalStorageService);
   private readonly nachtscanService = inject(NachtscanService);
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
@@ -38,7 +48,7 @@ export class ScanComponent implements OnInit {
 
   public readonly filter = signal<"found" | "not_found" | "all">("all");
   public readonly state = signal<InterfaceState>({ loading: false, error: false, data: null });
-  /** Feedback visual opcional para o botão de copiar (ex: mostrar um "Copiado!" por 2s). */
+
   public readonly copied = signal(false);
 
   public readonly filteredSources = computed(() => {
@@ -67,10 +77,7 @@ export class ScanComponent implements OnInit {
       await navigator.clipboard.writeText(nickname);
       this.copied.set(true);
       setTimeout(() => this.copied.set(false), 2000);
-    } catch {
-      // Falha ao acessar a clipboard (ex: permissão negada); ignorado silenciosamente.
-      // Se quiser feedback ao usuário, um signal de erro pode ser exposto aqui.
-    }
+    } catch {/** */}
   }
 
   public ngOnInit(): void {
@@ -82,7 +89,25 @@ export class ScanComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
-        next: (status) => this.state.set({ loading: false, error: false, data: status }),
+        next: (status) => {
+          this.state.set({ loading: false, error: false, data: status });
+
+          const localHistory = this.localStorageService.get<InterfaceFindStatusNicknameData[]>("localHistory") || [];
+
+          let updated = false;
+
+          localHistory.map((data) => {
+            if (data.scan.nickname === status.scan.nickname) {
+              updated = true;
+              return status;
+            }
+            return data;
+          });
+
+          if (updated === false) localHistory.push(status);
+
+          this.localStorageService.set("localHistory", localHistory);
+        },
         error: () => this.state.update((state) => ({ ...state, loading: false, error: true })),
       });
   }
