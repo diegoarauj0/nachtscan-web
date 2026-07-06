@@ -1,4 +1,4 @@
 export const environment = {
-  production: true,
-  apiUrl: 'https://api.nachtscan.diegoarauj0.qzz.io',
+  production: false,
+  apiUrl: 'http://localhost:5000',
 };

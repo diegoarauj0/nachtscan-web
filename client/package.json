@@ -4,9 +4,11 @@
   "version": "1.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host 0.0.0.0 --poll 1000",
-    "build": "ng build --configuration production",
-    "watch": "ng build --watch --configuration development",
+    "generate-env": "node tools/generate-env.mjs",
+    "generate-env:dev": "node tools/generate-env.mjs --development",
+    "start": "npm run generate-env:dev && ng serve --host 0.0.0.0 --poll 1000",
+    "build": "npm run generate-env && ng build --configuration production",
+    "watch": "npm run generate-env:dev && ng build --watch --configuration development",
     "test": "ng test",
     "lint": "eslint ."
   },
@@ -20,6 +22,7 @@
     "@angular/platform-browser": "^22.0.0",
     "@angular/router": "^22.0.0",
     "@lucide/angular": "^1.23.0",
+    "dotenv": "^17.4.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
