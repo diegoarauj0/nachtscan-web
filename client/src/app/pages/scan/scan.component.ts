@@ -142,7 +142,7 @@ export class ScanComponent implements OnInit {
         }
 
         if (status.scan.status === "failed") {
-          this.state.update(() => ({ loading: false, error: true, data: status }));
+          this.state.update(() => ({ loading: false, error: false, data: status }));
 
           if (attempts < this.MAX_FAILED_RETRIES) {
             return this.triggerScanAndRetry(nickname, attempts + 1);

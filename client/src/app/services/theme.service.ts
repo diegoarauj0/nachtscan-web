@@ -25,6 +25,6 @@ export class ThemeService {
   private load(): void {
     const savedTheme = localStorage.getItem("theme") as Theme | null;
 
-    this.setTheme(savedTheme ?? "light");
+    this.setTheme(savedTheme ?? "dark");
   }
 }

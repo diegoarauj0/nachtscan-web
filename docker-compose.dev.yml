@@ -28,6 +28,7 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile.dev
+    image: nachtscan-client
     ports:
       - "4200:4200"
     environment:
