@@ -5,7 +5,7 @@ export function setupSwagger(app: INestApplication): void {
   const config = new DocumentBuilder()
     .setTitle("Nachtscan API")
     .setDescription("API for scanning usernames across configured sources.")
-    .setVersion("1.0.0")
+    .setVersion("1.0.1")
     .addTag("scan")
     .build();
 
