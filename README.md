@@ -1,4 +1,4 @@
-<center>
+<div align="center">
 
   # NachtScan
 
@@ -15,9 +15,9 @@
   [![Angular](https://img.shields.io/badge/Angular-%23DD0031.svg?style=for-the-badge&logo=angular&logoColor=white)](#)
   [![Redis](https://img.shields.io/badge/Redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)](#)
 
-</center>
+</div>
 
-<center>
+<div align="center">
 
 ## 🖼️ Screenshots
 
@@ -25,7 +25,7 @@
 
 <img src="./docs/screenshot-profile.png" alt="screenshot profile" width=600 >
 
-</center>
+</div>
 
 ## 📑 Sumário
 
@@ -123,7 +123,7 @@ Algumas variáveis possuem **valores padrão**, enquanto outras são **obrigató
 | `MASTODON_CLIENT_KEY` | Sim* | Chave da aplicação registrada no Mastodon. | `xxxxxxxx` |
 | `MASTODON_CLIENT_SECRET` | Sim* | Segredo da aplicação registrada no Mastodon. | `xxxxxxxx` |
 
-> ***** Obrigatória apenas se a respectiva fonte estiver habilitada em `ENABLED_SOURCES`.
+> Obrigatória apenas se a respectiva fonte estiver habilitada em `ENABLED_SOURCES`.
 > Os tokens do GitHub, GitLab, Bitbucket, Codeberg e Dev.to são opcionais. Sem eles, o NachtScan continua funcionando, porém estará sujeito aos limites de requisição (rate limiting) impostos pelas respectivas APIs.
 
 ### Client
@@ -210,7 +210,7 @@ Por padrão, após a inicialização, o cliente ficará disponível em `http://l
 | Mastodon | Sim* |
 | osu! | Sim* |
 
-> ***** Necessário apenas se a fonte estiver explicitamente habilitada em `ENABLED_SOURCES`.
+> Necessário apenas se a fonte estiver explicitamente habilitada em `ENABLED_SOURCES`.
 
 ## 📄 Licença
 
