@@ -7,7 +7,6 @@ export enum SourceId {
   GitLab = "gitlab",
   GitHub = "github",
   DevTo = "devto",
-  Steam = "steam",
   Osu = "osu",
 }
 

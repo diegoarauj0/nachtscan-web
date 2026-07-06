@@ -28,7 +28,7 @@ export class HomeComponent {
         nickname: status.scan.nickname,
         notFound: status.notFound,
         total: status.length,
-        percentage,
+        percentage: percentage.toFixed(),
       };
     }),
   );

@@ -6,7 +6,6 @@ import { BlueskySource } from "./bluesky.source";
 import { GithubSource } from "./github.source";
 import { GitlabSource } from "./gitlab.source";
 import { DevToSource } from "./devto.source";
-import { SteamSource } from "./steam.source";
 import { OsuSource } from "./osu.source";
 
 export default [
@@ -18,6 +17,5 @@ export default [
   GithubSource,
   GitlabSource,
   DevToSource,
-  SteamSource,
   OsuSource,
 ];

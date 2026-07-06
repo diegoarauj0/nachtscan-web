@@ -3,10 +3,10 @@ import { LucideCircleAlert, LucideArrowLeft, LucideCompass, LucideCopy, LucideCo
 import { Component, computed, DestroyRef, inject, OnInit, signal } from "@angular/core";
 import { catchError, Observable, of, switchMap, throwError, timer } from "rxjs";
 import { SourceComponent } from "../../components/source/source.component";
-import { InterfaceSourceScan } from "../../types/nachtscan.type";
-import { ActivatedRoute, RouterLink } from "@angular/router";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { LocalStorageService } from "../../services/localStorage.service";
+import { InterfaceSourceScan } from "../../types/nachtscan.type";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 
 interface InterfaceState {
   data: InterfaceFindStatusNicknameData | null;

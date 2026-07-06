@@ -40,3 +40,13 @@ header > div > ul > li {
   text-align: center;
   font-size: 0.8rem;
 }
+
+h1 {
+  display: flex;
+  align-items: center;
+}
+
+h1 > img {
+  height: 50px;
+  margin-right: 10px;
+}

@@ -8,7 +8,6 @@ import { BlueskySource } from "./sources/bluesky.source";
 import { GitlabSource } from "./sources/gitlab.source";
 import { GithubSource } from "./sources/github.source";
 import { DevToSource } from "./sources/devto.source";
-import { SteamSource } from "./sources/steam.source";
 import { OsuSource } from "./sources/osu.source";
 import { ConfigService } from "@nestjs/config";
 
@@ -29,7 +28,6 @@ export class SourcesRegistry implements OnModuleInit {
     private readonly githubSource: GithubSource,
     private readonly gitlabSource: GitlabSource,
     private readonly devtoSource: DevToSource,
-    private readonly steamSource: SteamSource,
     private readonly osuSource: OsuSource,
   ) {
     this.sources.set(this.bitbucketSource.sourceId, this.bitbucketSource);
@@ -40,7 +38,6 @@ export class SourcesRegistry implements OnModuleInit {
     this.sources.set(this.githubSource.sourceId, this.githubSource);
     this.sources.set(this.gitlabSource.sourceId, this.gitlabSource);
     this.sources.set(this.devtoSource.sourceId, this.devtoSource);
-    this.sources.set(this.steamSource.sourceId, this.steamSource);
     this.sources.set(this.osuSource.sourceId, this.osuSource);
   }
 
