@@ -1,18 +1,15 @@
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { REDIS_CLIENT } from "../redis/redis.constants";
 import { QUEUES_CONSTANTS } from "./queue.constants";
+import { RedisModule } from "../redis/redis.module";
 import { BullModule } from "@nestjs/bullmq";
 import { Module } from "@nestjs/common";
+import { RedisClient } from "bullmq";
 
 const bullmqModule = BullModule.forRootAsync({
-  imports: [ConfigModule],
-  inject: [ConfigService],
-  useFactory: (configService: ConfigService) => ({
-    connection: {
-      username: configService.get("redis.username"),
-      password: configService.get("redis.password"),
-      host: configService.get("redis.host"),
-      port: configService.get("redis.port"),
-    },
+  imports: [RedisModule],
+  inject: [REDIS_CLIENT],
+  useFactory: (redis: RedisClient) => ({
+    connection: redis,
     defaultJobOptions: {
       attempts: QUEUES_CONSTANTS.DEFAULT.ATTEMPTS,
       removeOnComplete: QUEUES_CONSTANTS.DEFAULT.REMOVE_ON_COMPLETE,

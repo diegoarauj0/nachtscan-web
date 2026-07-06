@@ -4,7 +4,7 @@ type Theme = "dark" | "light";
 
 @Service()
 export class ThemeService {
-  readonly theme = signal<Theme>("light");
+  readonly theme = signal<Theme>("dark");
 
   constructor() {
     this.load();

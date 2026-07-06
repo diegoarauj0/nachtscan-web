@@ -9,6 +9,7 @@ const redisModule = {
   inject: [ConfigService],
   useFactory: (configService: ConfigService) => {
     return new Redis({
+      maxRetriesPerRequest: null,
       username: configService.get("REDIS_USERNAME"),
       password: configService.get("REDIS_PASSWORD"),
       host: configService.get("REDIS_HOST"),

@@ -1,0 +1,40 @@
+{
+  "name": "nachtscan-web",
+  "version": "1.0.0",
+  "description": "NachtScan é uma plataforma web que permite verificar, em poucos segundos, se um nickname está disponível ou já está em uso em diversas plataformas na internet (redes sociais, ecossistemas de código, fóruns e jogos).",
+  "private": true,
+  "homepage": "https://github.com/diegoarauj0/nachtscan-web#readme",
+  "bugs": {
+    "url": "https://github.com/diegoarauj0/nachtscan-web/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diegoarauj0/nachtscan-web.git"
+  },
+  "license": "MIT",
+  "author": "Diego Araujo",
+  "type": "commonjs",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "concurrently -n client,server \"npm run start --prefix client\" \"npm run start:dev --prefix server\"",
+    "build": "concurrently -n client,server \"npm --prefix client run build\" \"npm --prefix server run build\"",
+    "start": "concurrently -n client,server \"npm --prefix client run start\" \"npm --prefix server run start:prod\"",
+
+    "docker:dev": "docker compose -f docker-compose.dev.yml up",
+    "docker:dev:down": "docker compose -f docker-compose.dev.yml down",
+    "docker:dev:restart": "npm run docker:dev:down && npm run docker:dev",
+
+    "docker:prod": "docker compose -f docker-compose.yml up -d",
+    "docker:prod:down": "docker compose -f docker-compose.yml down",
+    "docker:prod:restart": "npm run docker:prod:down && npm run docker:prod",
+
+    "docker:dev:logs": "docker compose -f docker-compose.dev.yml logs -f",
+    "docker:prod:logs": "docker compose -f docker-compose.yml logs -f"
+  },
+  "dependencies": {
+    "concurrently": "^10.0.3"
+  }
+}
