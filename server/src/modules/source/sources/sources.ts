@@ -1,4 +1,3 @@
-import { BitbucketSource } from "./bitbucket.source";
 import { MinecraftSource } from "./minecraft.source";
 import { CodebergSource } from "./codeberg.source";
 import { MastodonSource } from "./mastodon.source";
@@ -9,7 +8,6 @@ import { DevToSource } from "./devto.source";
 import { OsuSource } from "./osu.source";
 
 export default [
-  BitbucketSource,
   MinecraftSource,
   CodebergSource,
   MastodonSource,

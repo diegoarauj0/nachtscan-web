@@ -1,6 +1,5 @@
 export enum SourceId {
   Minecraft = "minecraft",
-  BitBucket = "bitbucket",
   CodeBerg = "codeberg",
   Mastodon = "mastodon",
   Bluesky = "bluesky",

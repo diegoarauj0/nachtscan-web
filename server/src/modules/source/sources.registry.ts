@@ -1,7 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { InterfaceBaseSource, SourceId } from "./source.type";
 import { MinecraftSource } from "./sources/minecraft.source";
-import { BitbucketSource } from "./sources/bitbucket.source";
 import { CodebergSource } from "./sources/codeberg.source";
 import { MastodonSource } from "./sources/mastodon.source";
 import { BlueskySource } from "./sources/bluesky.source";
@@ -20,7 +19,6 @@ export class SourcesRegistry implements OnModuleInit {
   constructor(
     private readonly configService: ConfigService,
 
-    private readonly bitbucketSource: BitbucketSource,
     private readonly minecraftSource: MinecraftSource,
     private readonly codebergSource: CodebergSource,
     private readonly mastodonSource: MastodonSource,
@@ -30,7 +28,6 @@ export class SourcesRegistry implements OnModuleInit {
     private readonly devtoSource: DevToSource,
     private readonly osuSource: OsuSource,
   ) {
-    this.sources.set(this.bitbucketSource.sourceId, this.bitbucketSource);
     this.sources.set(this.minecraftSource.sourceId, this.minecraftSource);
     this.sources.set(this.codebergSource.sourceId, this.codebergSource);
     this.sources.set(this.mastodonSource.sourceId, this.mastodonSource);
