@@ -115,7 +115,6 @@ Algumas variáveis possuem **valores padrão**, enquanto outras são **obrigató
 | `ENABLED_SOURCES` | Sim | Lista de provedores habilitados, separados por vírgula. | `github,gitlab,bitbucket` |
 | `GITHUB_TOKEN` | Não | Token da API do GitHub. Opcional, mas recomendado para aumentar o limite de requisições. | `ghp_xxxxxxxxx` |
 | `GITLAB_TOKEN` | Não | Token da API do GitLab. Opcional, mas recomendado para aumentar o limite de requisições. | `glpat-xxxxxxxx` |
-| `BITBUCKET_TOKEN` | Não | Token da API do Bitbucket. Opcional, mas recomendado para aumentar o limite de requisições. | `xxxxxxxx` |
 | `CODEBERG_TOKEN` | Não | Token da API do Codeberg. Opcional, mas recomendado para aumentar o limite de requisições. | `xxxxxxxx` |
 | `DEVTO_TOKEN` | Não | Chave da API do Dev.to. Opcional, mas recomendada para aumentar o limite de requisições. | `xxxxxxxx` |
 | `OSU_CLIENT_ID` | Sim* | Client ID da API do osu!. | `12345` |
@@ -202,7 +201,6 @@ Por padrão, após a inicialização, o cliente ficará disponível em `http://l
 | --- | --- |
 | GitHub | Opcional |
 | GitLab | Opcional |
-| Bitbucket | Opcional |
 | Codeberg | Opcional |
 | Dev.to | Opcional |
 | BlueSky | Não |

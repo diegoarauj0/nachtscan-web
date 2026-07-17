@@ -1,7 +1,7 @@
 {
   "name": "nachtscan-client",
   "description": "NachtScan é uma plataforma web que permite verificar, em poucos segundos, se um nickname está disponível ou já está em uso em diversas plataformas na internet (redes sociais, ecossistemas de código, fóruns e jogos).",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "scripts": {
     "ng": "ng",
     "generate-env": "node ./tools/generate-env.mjs",
